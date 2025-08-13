@@ -1,0 +1,40 @@
+[
+    {
+        "timestamp": "20250813_195624",
+        "log_file": "logs/training/dropout/dropout_20250813_195624.log",
+        "json_file": "logs/training/dropout/dropout_20250813_195624.json",
+        "summary": {
+            "val_loss": 1.19861900806427,
+            "val_accuracy": 0.7017543911933899,
+            "val_precision": 0.5625,
+            "val_recall": 0.8571428656578064,
+            "val_f1": 0.6792452809078624
+        },
+        "hyperparameters": {
+            "batch_size": 64,
+            "dropout_rate": 0.2,
+            "optimizer": "adam",
+            "learning_rate": 0.0010000000474974513,
+            "epochs": 2
+        }
+    },
+    {
+        "timestamp": "20250813_195643",
+        "log_file": "logs/training/dropout/dropout_20250813_195643.log",
+        "json_file": "logs/training/dropout/dropout_20250813_195643.json",
+        "summary": {
+            "val_loss": 24.57711410522461,
+            "val_accuracy": 0.6315789222717285,
+            "val_precision": 0.0,
+            "val_recall": 0.0,
+            "val_f1": 0.0
+        },
+        "hyperparameters": {
+            "batch_size": 64,
+            "dropout_rate": 0.2,
+            "optimizer": "adam",
+            "learning_rate": 0.0010000000474974513,
+            "epochs": 2
+        }
+    }
+]

@@ -4,7 +4,7 @@ from src.data.preprocessor_with_normalization import BreastCancerPreprocessorNor
 #from src.training.train_base import train_model
 
 
-from src.training.train_base_class import ModelTrainer
+from src.training.train_base_class2 import ModelTrainer
 from src.models.baseline import build_baseline, build_compile_baseline
 from src.models.model_dropout import build_model_with_dropout, build_compile_dropout
 from src.models.model_no_dropout import build_model_no_dropout, build_compile_no_dropout

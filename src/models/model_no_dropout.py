@@ -18,3 +18,16 @@ def build_compile_no_dropout():
     model = build_model_no_dropout()
     compile_model(model)
     return model
+
+
+
+
+
+
+def build_model_no_dropout_tuner(hp): #, input_dim):
+    learning_rate = hp.Float("learning_rate", 1e-4, 1e-2, sampling="log")
+
+    model = build_model_no_dropout()
+
+    compile_model(model, learning_rate)
+    return model

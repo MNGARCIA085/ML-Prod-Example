@@ -24,7 +24,7 @@ def build_compile_baseline(dropout_rate=0.1):
 def baseline_with_tuner(hp):
     learning_rate = hp.Float("learning_rate", 1e-4, 1e-2, sampling="log")
 
-    model = build_baseline(dropout_rate=dropout_rate)
+    model = build_baseline()
 
     # Recompile model with tunable learning rate
     compile_model(model, learning_rate)

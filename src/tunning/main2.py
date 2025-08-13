@@ -6,7 +6,7 @@ from src.data.preprocessor import BreastCancerPreprocessor
 from src.models.model_dropout import build_model_with_dropout_tuner
 from src.models.model_no_dropout import build_model_no_dropout_tuner
 from src.models.baseline import baseline_with_tuner  # if exists
-from src.tunning.tuner_with_class2 import ModelTuner
+from src.tunning.tuner_with_class3 import ModelTuner # 2ok
 
 
 def compute_f1_from_metrics(val_metrics):

@@ -4,7 +4,7 @@ from src.data.preprocessor_with_normalization import BreastCancerPreprocessorNor
 #from src.training.train_base import train_model
 
 
-from src.training.train_base_class2 import ModelTrainer
+from src.training.train_base_class3 import ModelTrainer
 from src.models.baseline import build_baseline, build_compile_baseline
 from src.models.model_dropout import build_model_with_dropout, build_compile_dropout
 from src.models.model_no_dropout import build_model_no_dropout, build_compile_no_dropout
@@ -77,7 +77,6 @@ def main():
         #("dropout", build_model_with_dropout),
         ("baseline", build_compile_baseline),
         ("no_dropout", build_compile_no_dropout),
-        #("dropout", build_compile_dropout),
         ("dropout", lambda: build_compile_dropout(dropout_rate=dropout_rate)),  # pass dropout
     ]:
         if not train_flags.get(name, False):
@@ -99,6 +98,7 @@ def main():
             val_ds=val_ds,
             test_ds=test_ds,
             model_name=name,
+            data_variant="testing_purposes",
             hyperparameters=hyperparams
         )
         results = trainer.train()

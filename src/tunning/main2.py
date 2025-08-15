@@ -9,6 +9,8 @@ from src.models.baseline import baseline_with_tuner  # if exists
 from src.tunning.tuner_with_class3 import ModelTuner # 2ok
 
 
+
+# que vaya a utils después!!!!!
 def compute_f1_from_metrics(val_metrics):
     """Compute F1 from val_metrics list assuming precision=val_metrics[2], recall=val_metrics[3]"""
     precision = val_metrics[2]
@@ -85,6 +87,10 @@ def main():
     print(f"All models results saved to {json_file}")
 
     print(f"\nBest model according to F1-score: {best_model_info['name']}, F1={best_f1:.4f}")
+
+    # best model according to f1-score and stability
+    # https://chatgpt.com/c/689e2a31-4828-832e-aac8-fb344e05fcdc
+
     return best_model_info
 
 
@@ -141,3 +147,33 @@ def main():
 
 if __name__ == "__main__":
     best_model_info = main()
+
+
+
+
+"""
+chossing bets model according to f1 and stability
+import numpy as np
+
+def stability_aware_f1_score(f1_history, epsilon=1e-8):
+    
+    #Compute a combined score: mean F1 weighted by stability.
+    
+    #f1_history: list or array of F1 scores per epoch
+    
+    
+
+    f1_history = np.array(f1_history)
+    mean_f1 = np.mean(f1_history)
+    std_f1 = np.std(f1_history)
+    
+    stability = 1 - (std_f1 / (mean_f1 + epsilon))
+    score = mean_f1 * stability
+    return score, mean_f1, stability
+
+# Example usage
+f1_vals = [0.78, 0.79, 0.81, 0.80, 0.79]
+score, mean_f1, stab = stability_aware_f1_score(f1_vals)
+
+print(f"Combined Score: {score:.3f}, Mean F1: {mean_f1:.3f}, Stability: {stab:.3f}")
+"""

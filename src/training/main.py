@@ -104,7 +104,7 @@ def main():
         results = trainer.train()
         experiments.append(results)
 
-    print(experiments)
+
 
 
 
@@ -116,7 +116,7 @@ def main():
     )[:2]  # top 2 by val_f1
 
 
-    print(top_models)
+
 
     #for best in top_models:
       #  print(f"Selected: {best['model_name']} with F1={best['val_f1']:.4f}")

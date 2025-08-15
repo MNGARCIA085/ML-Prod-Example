@@ -1,0 +1,31 @@
+{
+    "model_name": "no_dropout",
+    "data_variant": "testing_purposes",
+    "timestamp": "20250814_150302",
+    "test_loss": 60.9045295715332,
+    "test_accuracy": 0.6315789222717285,
+    "hyperparameters": {
+        "batch_size": 64,
+        "optimizer": "adam",
+        "learning_rate": 0.0010000000474974513,
+        "epochs": 2
+    },
+    "history": {
+        "loss": [
+            124.12039947509766,
+            93.56332397460938
+        ],
+        "val_loss": [
+            84.64696502685547,
+            59.195919036865234
+        ],
+        "accuracy": [
+            0.6256281137466431,
+            0.6281406879425049
+        ],
+        "val_accuracy": [
+            0.6315789222717285,
+            0.6315789222717285
+        ]
+    }
+}

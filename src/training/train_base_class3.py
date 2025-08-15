@@ -94,7 +94,7 @@ class ModelTrainer:
             "test_accuracy": self.test_acc,
             "hyperparameters": self.hyperparameters,
             "history": {
-                "loss": list(map(float, self.history.history["loss"])),
+                "loss": list(map(float, self.history.history["loss"])), # val_loss???????
                 "val_loss": list(map(float, self.history.history["val_loss"])),
                 "accuracy": list(map(float, self.history.history["accuracy"])),
                 "val_accuracy": list(map(float, self.history.history["val_accuracy"]))

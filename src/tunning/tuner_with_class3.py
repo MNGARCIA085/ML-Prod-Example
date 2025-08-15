@@ -107,8 +107,8 @@ class ModelTuner:
         self.log(f"Logs saved to {self.log_file}")
         self.log(f"JSON metrics saved to {self.json_file}")
 
-    def run(self, train_ds, val_ds, test_ds=None, max_trials=5, executions_per_trial=1,
-            epochs=20, patience=3, seed=42): # quitar el hardcoding de max traisl (agregarki en el init)
+    def run(self, train_ds, val_ds, test_ds=None, max_trials=2, executions_per_trial=1,
+            epochs=5, patience=3, seed=42): # quitar el hardcoding de max traisl (agregarki en el init); y y 1 y 20 epochs
         random.seed(seed)
         np.random.seed(seed)
         tf.random.set_seed(seed)
@@ -131,10 +131,22 @@ class ModelTuner:
         )
         metrics_logger_cb = MetricsLogger(self.log)
 
+        
+
+
+        
+
+
+
         self.log("Starting tuner search...")
         tuner.search(train_ds, validation_data=val_ds, epochs=epochs,
                      callbacks=[early_stopping_cb, metrics_logger_cb])
         self.log("Tuner search finished.")
+
+        
+
+
+
 
         best_model = tuner.get_best_models(num_models=1)[0]
         best_hp = tuner.get_best_hyperparameters(num_trials=1)[0]
@@ -194,3 +206,17 @@ class ModelTuner:
 
         self.log(f"=== End of tuner for {self.build_model_fn.__name__} ===")
         return best_model, best_hp, val_metrics, test_metrics_data
+
+
+
+"""
+4️⃣ Recommended workflow
+
+Run tuning for a model → checkpoint automatically saved per run.
+
+Save logs (JSON) → include metrics, hyperparameters, and best_model_path.
+
+Repeat for other models.
+
+Load a specific checkpoint later using the best_model_path stored in your JSON index.
+"""

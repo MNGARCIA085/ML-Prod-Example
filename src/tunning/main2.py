@@ -79,28 +79,27 @@ def main():
         print(f"{model_name} best hyperparameters: {best_hp.values}")
         print(f"{model_name} evaluation on test set: {best_model.evaluate(test_ds)}\n")
 
+
+
+    """
     # Save all results into a single JSON
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     json_file = f"logs/tuning/all_models_results_{timestamp}.json"
     with open(json_file, "w") as f:
         json.dump(results, f, indent=4)
     print(f"All models results saved to {json_file}")
-
     print(f"\nBest model according to F1-score: {best_model_info['name']}, F1={best_f1:.4f}")
-
     # best model according to f1-score and stability
     # https://chatgpt.com/c/689e2a31-4828-832e-aac8-fb344e05fcdc
-
     return best_model_info
+    """
 
 
     # maybe save the best model (to deploy it later!!!!!!!)
     """
     import os
-
     os.makedirs("saved_models", exist_ok=True)
     best_model.save("saved_models/best_model.h5")
-
     # Save hyperparameters & metrics
     import json
 
@@ -112,9 +111,10 @@ def main():
         }, f, indent=4)
     """
 
-    """
-    better
+    
+    #better
     # Save all results into a single JSON
+    import os
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     os.makedirs("logs/tuning", exist_ok=True)
     json_file = f"logs/tuning/all_models_results_{timestamp}.json"
@@ -142,7 +142,7 @@ def main():
 
     print(f"\nBest model according to F1-score: {best_model_info['name']}, F1={best_f1:.4f}")
     return best_model_info
-    """
+    
 
 
 if __name__ == "__main__":
@@ -152,6 +152,7 @@ if __name__ == "__main__":
 
 
 """
+https://chatgpt.com/c/689e2a31-4828-832e-aac8-fb344e05fcdc
 chossing bets model according to f1 and stability
 import numpy as np
 

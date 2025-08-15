@@ -1,5 +1,6 @@
 from sklearn.preprocessing import StandardScaler
 from src.data.base_preprocessor import BasePreprocessor
+import pandas as pd
 
 class BreastCancerPreprocessorNormalized(BasePreprocessor):
     def preprocess_data(self):

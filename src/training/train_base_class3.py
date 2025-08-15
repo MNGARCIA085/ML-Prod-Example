@@ -83,6 +83,10 @@ class ModelTrainer:
             "val_recall": self.val_recall,
             "val_f1": self.val_f1,
             "hyperparameters": self.hyperparameters,
+
+            "model_name" : self.model_name,
+            "data_variant" : self.data_variant,
+
         }
 
     def save_logs(self):

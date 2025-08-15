@@ -23,27 +23,6 @@ def main():
     train_ds, val_ds, test_ds = preprocessor.get_datasets(filepath)
 
 
-
-    # code one by one.......
-    """
-    # baseline
-    trainer = ModelTrainer(model_fn=build_baseline, train_ds=train_ds, val_ds=val_ds, test_ds=test_ds, model_name="baseline")
-    results = trainer.train()
-    # without dropout
-    trainer_no_dropout = ModelTrainer(model_fn=build_model_no_dropout, train_ds=train_ds, val_ds=val_ds, test_ds=test_ds, 
-                                    model_name="no_dropout")
-    results_no_dropout = trainer_no_dropout.train()
-    print(results_no_dropout['model'])
-
-    # with dropout
-    trainer_dropout = ModelTrainer(model_fn=build_model_with_dropout, train_ds=train_ds, val_ds=val_ds, test_ds=test_ds, 
-                        model_name="dropout")
-    results_dropout = trainer_dropout.train()
-    print(results_dropout)
-    """
-
-
-
     parser = argparse.ArgumentParser(description="Train models with optional flags.")
     parser.add_argument("--baseline", action="store_true", help="Train baseline model")
     parser.add_argument("--no_dropout", action="store_true", help="Train no_dropout model")
@@ -72,9 +51,6 @@ def main():
     experiments = []
 
     for name, model_fn in [
-        #("baseline", build_baseline),
-        #("no_dropout", build_model_no_dropout),
-        #("dropout", build_model_with_dropout),
         ("baseline", build_compile_baseline),
         ("no_dropout", build_compile_no_dropout),
         ("dropout", lambda: build_compile_dropout(dropout_rate=dropout_rate)),  # pass dropout
@@ -98,7 +74,7 @@ def main():
             val_ds=val_ds,
             test_ds=test_ds,
             model_name=name,
-            data_variant="testing_purposes",
+            data_variant="simple",
             hyperparameters=hyperparams
         )
         results = trainer.train()

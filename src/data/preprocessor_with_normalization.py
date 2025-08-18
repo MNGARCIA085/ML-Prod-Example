@@ -3,6 +3,21 @@ from src.data.base_preprocessor import BasePreprocessor
 import pandas as pd
 
 class BreastCancerPreprocessorNormalized(BasePreprocessor):
+    """
+    Preprocessor for the Breast Cancer dataset with normalization.
+
+    Inherits the same data cleaning and label encoding steps as
+    `BreastCancerPreprocessor`, but additionally overrides
+    `post_split_transform` to apply feature scaling.
+
+    Scaling:
+    - Standardizes features (zero mean, unit variance) using
+      `sklearn.preprocessing.StandardScaler`.
+    - Fits the scaler on the training set, then applies it to
+      validation and test sets.
+    """
+
+    
     def preprocess_data(self):
         df = self.df.copy()
         if 'Unnamed: 32' in df.columns:

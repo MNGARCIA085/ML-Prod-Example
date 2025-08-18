@@ -3,6 +3,24 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 
 class BasePreprocessor:
+    """
+    A generic preprocessing pipeline for tabular datasets.
+
+    Responsibilities:
+    - Load raw data from a CSV file.
+    - Provide hooks (`preprocess_data`, `post_split_transform`) for dataset-specific
+      preprocessing steps.
+    - Split data into training, validation, and test sets with stratification.
+    - Convert data into TensorFlow `tf.data.Dataset` objects with batching and shuffling.
+
+    Intended Usage:
+    - Inherit from this class and override:
+        * `preprocess_data()` to define how to extract features and labels.
+        * `post_split_transform()` if additional transformations are needed
+          after splitting (e.g., normalization, scaling).
+    """
+
+    
     def __init__(self, batch_size=32, test_size=0.2, val_size=0.1, random_state=42):
         self.batch_size = batch_size
         self.test_size = test_size

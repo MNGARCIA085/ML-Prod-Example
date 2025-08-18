@@ -1,0 +1,31 @@
+{
+    "model_name": "baseline",
+    "data_variant": "simple",
+    "timestamp": "20250818_202408",
+    "test_loss": 80.31816101074219,
+    "test_accuracy": 0.6315789222717285,
+    "hyperparameters": {
+        "batch_size": 64,
+        "optimizer": "adam",
+        "learning_rate": 0.0010000000474974513,
+        "epochs": 2
+    },
+    "history": {
+        "loss": [
+            117.07137298583984,
+            98.73140716552734
+        ],
+        "val_loss": [
+            96.3790283203125,
+            79.0962142944336
+        ],
+        "accuracy": [
+            0.6256281137466431,
+            0.6256281137466431
+        ],
+        "val_accuracy": [
+            0.6315789222717285,
+            0.6315789222717285
+        ]
+    }
+}

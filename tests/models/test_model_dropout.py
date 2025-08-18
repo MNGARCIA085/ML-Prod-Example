@@ -1,15 +1,26 @@
+# -----------------------------
+# Standard library imports
+# -----------------------------
 import pytest
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
 import numpy as np
 
+# -----------------------------
+# Third-party imports
+# -----------------------------
+import tensorflow as tf
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense, Dropout
 
+# -----------------------------
+# Local application imports
+# -----------------------------
 from src.models.model_dropout import build_model_with_dropout
-from src.models.compile_utils import compile_model
+from src.models.utils import compile_model
 
 
 
+
+# test build model
 def test_build_model():
     dropout_rate = 0.25
     model = build_model_with_dropout(dropout_rate)
@@ -22,16 +33,15 @@ def test_build_model():
     for layer in dropout_layers:
         assert abs(layer.rate - dropout_rate) < 1e-6
 
+
+# test compile model
 def test_compile_model():
     model = build_model_with_dropout()
     compile_model(model, learning_rate=0.005)
 
     assert isinstance(model.optimizer, tf.keras.optimizers.Adam)
     assert abs(model.optimizer.learning_rate.numpy() - 0.005) < 1e-6
-
     assert model.loss == 'binary_crossentropy'
-
-
 
 
     # Dummy input and labels
@@ -58,6 +68,8 @@ def test_compile_model():
     assert 'precision' in metric_names
     assert 'recall' in metric_names
 
+
+# test forward pass
 def test_model_forward_pass():
     model = build_model_with_dropout()
     compile_model(model)
@@ -69,8 +81,8 @@ def test_model_forward_pass():
 
 
 
+
+
 #pytest tests/models/test_model_dropout.py -v --tb=long
-
 #pytest tests
-
 #pytest tests -s -v

@@ -1,6 +1,6 @@
-from src.models.compile_utils import compile_model
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
+from src.models.utils import compile_model
 
 
 # simple baseline model
@@ -17,7 +17,6 @@ def build_compile_baseline(dropout_rate=0.1):
     model = build_baseline()
     compile_model(model)
     return model
-
 
 
 # for Keras tuner

@@ -1,19 +1,13 @@
-from .utils import get_early_stopping
-from .utils import make_run_dirs
-from .utils import extract_optimizer_info
-from .utils import log_message
-import json
-import os
-
-
+from src.models.utils import get_early_stopping
 
 class ModelTrainer:
-    def __init__(self, model_fn, train_ds, val_ds, model_name,
+    def __init__(self, model_fn, train_ds, val_ds, test_ds, model_name,
                  data_variant="default", log_dir="logs/training", epochs=2,
                  hyperparameters=None, callbacks=None):
         self.model_fn = model_fn
         self.train_ds = train_ds
         self.val_ds = val_ds
+        self.test_ds = test_ds
         self.model_name = model_name
         self.data_variant = data_variant
         self.epochs = epochs
@@ -21,11 +15,13 @@ class ModelTrainer:
         self.callbacks = callbacks or []
 
         # Paths, timestamp, etc. (using your existing utils)
+        from src.models.utils import make_run_dirs
         self.run_dir, self.log_file, self.json_file, self.runs_index_file, self.timestamp = make_run_dirs(
             log_dir, model_name, data_variant
         )
 
     def log(self, msg):
+        from src.models.utils import log_message
         log_message(msg, self.log_file)
 
     def train(self):
@@ -33,6 +29,7 @@ class ModelTrainer:
         self.model = self.model_fn()
 
         # Fill missing hyperparameters
+        from src.models.utils import extract_optimizer_info
         if "optimizer" not in self.hyperparameters or "learning_rate" not in self.hyperparameters:
             opt_info = extract_optimizer_info(self.model)
             self.hyperparameters.setdefault("optimizer", opt_info["optimizer"])
@@ -50,9 +47,9 @@ class ModelTrainer:
         # Evaluate
         self.val_loss, self.val_acc, self.val_precision, self.val_recall = self.model.evaluate(self.val_ds)
         self.val_f1 = 2 * (self.val_precision * self.val_recall) / (self.val_precision + self.val_recall + 1e-8)
+        self.test_loss, self.test_acc, self.test_precision, self.test_recall = self.model.evaluate(self.test_ds)
 
         self.save_logs()
-        
         return {
             "model": self.model,
             "history": self.history,
@@ -61,35 +58,39 @@ class ModelTrainer:
             "val_precision": self.val_precision,
             "val_recall": self.val_recall,
             "val_f1": self.val_f1,
+            "test_loss": self.test_loss,
+            "test_accuracy": self.test_acc,
             "hyperparameters": self.hyperparameters,
             "model_name": self.model_name,
             "data_variant": self.data_variant,
         }
 
+"""
 
-    def save_logs(self):
-        results = {
-            "model_name": self.model_name,
-            "data_variant": self.data_variant,
-            "timestamp": self.timestamp,
-            #"test_loss": self.test_loss,
-            #"test_accuracy": self.test_acc,
-            "hyperparameters": self.hyperparameters,
-            "history": {k: list(map(float, v)) for k, v in self.history.history.items()}
-        }
+from src.models.trainer import ModelTrainer
+from src.models.utils import get_early_stopping
 
-        with open(self.json_file, "w") as f:
-            json.dump(results, f, indent=4)
+trainer = ModelTrainer(
+    model_fn=build_model_with_dropout,
+    train_ds=train_ds,
+    val_ds=val_ds,
+    test_ds=test_ds,
+    model_name="dropout_model",
+    epochs=20,
+    callbacks=[get_early_stopping(patience=5)]
+)
 
-        # Update runs index
-        runs_index = []
-        if os.path.exists(self.runs_index_file):
-            with open(self.runs_index_file, "r") as f:
-                runs_index = json.load(f)
-        runs_index.append({"timestamp": self.timestamp, "json_file": os.path.basename(self.json_file)})
-        with open(self.runs_index_file, "w") as f:
-            json.dump(runs_index, f, indent=4)
+results = trainer.train()
 
-        self.log(f"Logs saved to {self.log_file}")
-        self.log(f"JSON saved to {self.json_file}")
-        self.log(f"Run index updated: {self.runs_index_file}")
+
+UTILS
+# src/models/utils.py
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+
+def get_early_stopping(monitor='val_loss', patience=3, restore_best_weights=True):
+    """Return a configured EarlyStopping callback."""
+    return EarlyStopping(monitor=monitor, patience=patience, restore_best_weights=restore_best_weights)
+
+def get_reduce_lr_on_plateau(monitor='val_loss', factor=0.5, patience=2, min_lr=1e-6):
+    """Return a ReduceLROnPlateau callback."""
+    return ReduceLROnPlateau(monitor=monitor, factor=factor, patience=patience, min_lr=min_lr)

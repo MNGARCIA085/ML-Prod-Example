@@ -2,14 +2,12 @@
 import argparse
 from src.data.preprocessor import BreastCancerPreprocessor
 from src.data.preprocessor_with_normalization import BreastCancerPreprocessorNormalized
-
 from src.training.train_base_class import ModelTrainer
 from src.models.baseline import build_compile_baseline
 from src.models.model_dropout import build_compile_dropout
 from src.models.model_no_dropout import build_compile_no_dropout
-
-
-
+from src.training.utils import get_callbacks
+from src.config.constants import BREAST_CANCER_CSV_RAW
 
 
 
@@ -17,7 +15,7 @@ from src.models.model_no_dropout import build_compile_no_dropout
 def get_preprocessor(name, batch_size):
     mapping = {
         "simple": BreastCancerPreprocessor(batch_size=batch_size),
-        "normalized": BreastCancerPreprocessorNormalized(batch_size=batch_size),
+        "standardize": BreastCancerPreprocessorNormalized(batch_size=batch_size),
     }
     if name not in mapping:
         raise ValueError(f"Unknown data variant: {name}")
@@ -25,22 +23,42 @@ def get_preprocessor(name, batch_size):
 
 
 def main():
-    filepath = 'data/data.csv'
-    batch_size = 64
-    dropout_rate = 0.2
+    filepath = BREAST_CANCER_CSV_RAW
+    
 
     # CLI setup
     parser = argparse.ArgumentParser(description="Train models with preprocessing variants.")
+    # models to train
     parser.add_argument("--models", nargs="+", choices=["baseline", "no_dropout", "dropout"],
                         help="Models to train (default: all)")
-    parser.add_argument("--data_variants", nargs="+", choices=["simple", "normalized"],
+    # data variants
+    parser.add_argument("--data_variants", nargs="+", choices=["simple", "standardize"],
                         help="Data variants to use (default: all)")
+
+    # hyperparams
+    parser.add_argument("--batch_size", type=int, default=64,
+                    help="Batch size for training (default: 64)")
+    parser.add_argument("--dropout_rate", type=float, default=0.2,
+                    help="Dropout rate (default: 0.2)")
+    
+
     args = parser.parse_args()
 
     # Defaults if not provided
     models_to_train = args.models or ["baseline", "no_dropout", "dropout"]
-    data_variants = args.data_variants or ["simple", "normalized"]
+    data_variants = args.data_variants or ["simple", "standardize"]
 
+    # hyperparams
+    batch_size = args.batch_size
+    dropout_rate = args.dropout_rate
+
+    # callbacks
+    callbacks = get_callbacks(
+        use_early_stopping=True, 
+        use_reduce_lr=False
+    )
+
+    
     # Model function mapping
     model_fns = {
         "baseline": build_compile_baseline,
@@ -49,6 +67,7 @@ def main():
     }
 
     experiments = []
+
 
     for data_variant in data_variants:
         preprocessor = get_preprocessor(data_variant, batch_size)
@@ -65,10 +84,11 @@ def main():
                 model_fn=model_fns[model_name],
                 train_ds=train_ds,
                 val_ds=val_ds,
-                test_ds=test_ds,
                 model_name=model_name,
                 data_variant=data_variant,
-                hyperparameters=hyperparams
+                epochs=10,
+                hyperparameters=hyperparams,
+                callbacks=callbacks
             )
             results = trainer.train()
             experiments.append(results)
@@ -89,14 +109,12 @@ if __name__ == '__main__':
 
 
 
-
-
-
-
-
 """
-python train.py --models baseline dropout --data_variants simple normalized
-
-
+python train.py --models baseline dropout --data_variants simple standardize
 python train.py  # trains all models with all data variants
+python train.py --batch_size 128 --dropout_rate 0.3
+
+
+python -m scripts.training
+
 """

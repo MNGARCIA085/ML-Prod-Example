@@ -30,6 +30,8 @@ class ModelTrainer:
 
     def train(self):
         self.log(f"=== Training: {self.model_name} ({self.data_variant}) ===")
+        
+        # Instanciate model
         self.model = self.model_fn()
 
         # Fill missing hyperparameters
@@ -51,8 +53,10 @@ class ModelTrainer:
         self.val_loss, self.val_acc, self.val_precision, self.val_recall = self.model.evaluate(self.val_ds)
         self.val_f1 = 2 * (self.val_precision * self.val_recall) / (self.val_precision + self.val_recall + 1e-8)
 
+        # save logs
         self.save_logs()
         
+        # return
         return {
             "model": self.model,
             "history": self.history,
@@ -72,9 +76,15 @@ class ModelTrainer:
             "model_name": self.model_name,
             "data_variant": self.data_variant,
             "timestamp": self.timestamp,
-            #"test_loss": self.test_loss,
-            #"test_accuracy": self.test_acc,
             "hyperparameters": self.hyperparameters,
+            "val_metrics":
+                {
+                    "loss": self.val_loss,
+                    "accuracy": self.val_acc,
+                    "precision": self.val_precision,
+                    "recall": self.val_recall,
+                    "f1": self.val_f1
+                },
             "history": {k: list(map(float, v)) for k, v in self.history.history.items()}
         }
 

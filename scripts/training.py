@@ -86,7 +86,7 @@ def main():
                 val_ds=val_ds,
                 model_name=model_name,
                 data_variant=data_variant,
-                epochs=10,
+                epochs=2,
                 hyperparameters=hyperparams,
                 callbacks=callbacks
             )

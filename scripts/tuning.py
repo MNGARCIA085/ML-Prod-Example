@@ -4,11 +4,12 @@ import os
 from datetime import datetime
 from sklearn.metrics import f1_score
 from src.data.preprocessor import BreastCancerPreprocessor
+from src.data.preprocessor_with_normalization import BreastCancerPreprocessorNormalized
 from src.models.model_dropout import build_model_with_dropout_tuner
 from src.models.model_no_dropout import build_model_no_dropout_tuner
 from src.models.baseline import baseline_with_tuner
 from src.tuning.tuner import ModelTuner
-
+from src.config.constants import BREAST_CANCER_CSV_RAW
 
 
 # save results
@@ -45,10 +46,11 @@ def save_best_model(best_model_info, timestamp, recall, best_f1):
 
 
 # get the best model and its data
-def get_best_model(train_ds, val_ds, max_trials, epochs,models_to_tune, recall_threshold=0.2):
+def get_best_model(train_ds, val_ds, max_trials, epochs, models_to_tune, recall_threshold=0.2):
     results = {}
     best_model_info = None
     best_f1 = -1.0
+    best_model_recall = -1.0  # track recall of the best model
 
     for model_name, build_fn in models_to_tune:
         print(f"\n=== Tuning {model_name} model ===")
@@ -65,13 +67,13 @@ def get_best_model(train_ds, val_ds, max_trials, epochs,models_to_tune, recall_t
             "val_metrics": val_metrics,
         }
 
-
         recall = val_metrics.get("recall", 0.0)
         f1 = val_metrics.get("f1_score", 0.0)
 
         if recall >= recall_threshold:
             if f1 > best_f1:
                 best_f1 = f1
+                best_model_ecall = recall
                 best_model_info = {
                     "name": model_name,
                     "model": best_model,
@@ -82,8 +84,7 @@ def get_best_model(train_ds, val_ds, max_trials, epochs,models_to_tune, recall_t
         print(f"{model_name} best hyperparameters: {best_hp.values}")
         print(f"{model_name} val metrics: {val_metrics}\n")
 
-    return results, best_model_info, recall, best_f1
-
+    return results, best_model_info, best_f1, best_model_recall
 
 
 
@@ -95,14 +96,14 @@ def main():
     parser.add_argument("--no_dropout", action="store_true", help="Tune model without dropout")
     parser.add_argument("--dropout", action="store_true", help="Tune model with dropout")
     parser.add_argument("--max_trials", type=int, default=3, help="Max trials for Keras Tuner")
-    parser.add_argument("--epochs", type=int, default=50, help="Max epochs per trial") #better default: 20
+    parser.add_argument("--epochs", type=int, default=5, help="Max epochs per trial") #better default: 20
     args = parser.parse_args()
 
     tune_all = not (args.baseline or args.no_dropout or args.dropout)
 
     # Prepare data
-    filepath = "data/data.csv"
-    preprocessor = BreastCancerPreprocessor(batch_size=32)
+    filepath = BREAST_CANCER_CSV_RAW
+    preprocessor = BreastCancerPreprocessorNormalized(batch_size=32)
     train_ds, val_ds, test_ds = preprocessor.get_datasets(filepath)
 
     models_to_tune = []

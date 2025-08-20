@@ -12,7 +12,8 @@ from .utils import MetricsLogger,HistoryCapture,compute_f1,set_seed
 
 
 
-# agregarle el F1-score
+
+
 
 
 class ModelTuner:
@@ -77,7 +78,9 @@ class ModelTuner:
         self.log(f"Logs saved to {self.log_file}")
         self.log(f"JSON metrics saved to {self.json_file}")
 
-    def run(self, train_ds, val_ds, test_ds=None, max_trials=2, executions_per_trial=1,
+
+
+    def run(self, train_ds, val_ds, max_trials=2, executions_per_trial=1,
             epochs=2, patience=5, seed=42):
         
         # seed
@@ -123,9 +126,6 @@ class ModelTuner:
         
 
         val_metrics = best_model.evaluate(val_ds, verbose=0)
-
-
-
         val_metrics_dict = {
                 "loss": val_metrics[0],
                 "accuracy": val_metrics[1],

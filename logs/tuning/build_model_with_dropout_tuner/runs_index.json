@@ -1,45 +1,67 @@
 [
     {
-        "timestamp": "20250820_195706",
-        "log_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250820_195706.log",
-        "json_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250820_195706.json",
+        "timestamp": "20250820_201110",
+        "log_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250820_201110.log",
+        "json_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250820_201110.json",
         "summary": {
             "val_metrics": {
-                "loss": 0.1975359320640564,
-                "accuracy": 0.9122806787490845,
-                "precision": 0.8999999761581421,
-                "recall": 0.8571428656578064,
-                "f1_score": 0.8780487686119562
+                "loss": 0.08181366324424744,
+                "accuracy": 0.9824561476707458,
+                "precision": 1.0,
+                "recall": 0.9523809552192688,
+                "f1_score": 0.9756097525897651
             },
             "best_hyperparameters": {
-                "dropout_rate": 0.1,
-                "learning_rate": 0.002051386718289359,
-                "trained_epochs": 10,
+                "dropout_rate": 0.4,
+                "learning_rate": 0.0033276572881909957,
+                "trained_epochs": 5,
                 "batch_size": 32,
                 "optimizer": "Adam",
-                "final_learning_rate": 0.0020513867493718863
+                "final_learning_rate": 0.0033276572357863188
             }
         }
     },
     {
-        "timestamp": "20250820_195901",
-        "log_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250820_195901.log",
-        "json_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250820_195901.json",
+        "timestamp": "20250820_201307",
+        "log_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250820_201307.log",
+        "json_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250820_201307.json",
         "summary": {
             "val_metrics": {
-                "loss": 0.20652836561203003,
-                "accuracy": 0.9473684430122375,
-                "precision": 0.9090909361839294,
+                "loss": 0.0591672919690609,
+                "accuracy": 0.9649122953414917,
+                "precision": 0.9523809552192688,
                 "recall": 0.9523809552192688,
-                "f1_score": 0.9302325686800641
+                "f1_score": 0.9523809502192688
             },
             "best_hyperparameters": {
-                "dropout_rate": 0.1,
-                "learning_rate": 0.002051386718289359,
-                "trained_epochs": 9,
+                "dropout_rate": 0.4,
+                "learning_rate": 0.0033276572881909957,
+                "trained_epochs": 10,
                 "batch_size": 32,
                 "optimizer": "Adam",
-                "final_learning_rate": 0.0020513867493718863
+                "final_learning_rate": 0.0033276572357863188
+            }
+        }
+    },
+    {
+        "timestamp": "20250820_201843",
+        "log_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250820_201843.log",
+        "json_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250820_201843.json",
+        "summary": {
+            "val_metrics": {
+                "loss": 0.09487888216972351,
+                "accuracy": 0.9824561476707458,
+                "precision": 1.0,
+                "recall": 0.9523809552192688,
+                "f1_score": 0.9756097525897651
+            },
+            "best_hyperparameters": {
+                "dropout_rate": 0.4,
+                "learning_rate": 0.0033276572881909957,
+                "trained_epochs": 5,
+                "batch_size": 32,
+                "optimizer": "Adam",
+                "final_learning_rate": 0.0033276572357863188
             }
         }
     }

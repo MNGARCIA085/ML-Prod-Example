@@ -1,0 +1,44 @@
+[
+    {
+        "timestamp": "20250820_195657",
+        "log_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250820_195657.log",
+        "json_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250820_195657.json",
+        "summary": {
+            "val_metrics": {
+                "loss": 0.309354692697525,
+                "accuracy": 0.8947368264198303,
+                "precision": 0.8947368264198303,
+                "recall": 0.8095238208770752,
+                "f1_score": 0.8499999941929359
+            },
+            "best_hyperparameters": {
+                "learning_rate": 0.00544853401907757,
+                "trained_epochs": 6,
+                "batch_size": 32,
+                "optimizer": "Adam",
+                "final_learning_rate": 0.005448534153401852
+            }
+        }
+    },
+    {
+        "timestamp": "20250820_195850",
+        "log_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250820_195850.log",
+        "json_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250820_195850.json",
+        "summary": {
+            "val_metrics": {
+                "loss": 0.16786983609199524,
+                "accuracy": 0.9473684430122375,
+                "precision": 0.949999988079071,
+                "recall": 0.9047619104385376,
+                "f1_score": 0.9268292606008608
+            },
+            "best_hyperparameters": {
+                "learning_rate": 0.00544853401907757,
+                "trained_epochs": 33,
+                "batch_size": 32,
+                "optimizer": "Adam",
+                "final_learning_rate": 0.005448534153401852
+            }
+        }
+    }
+]

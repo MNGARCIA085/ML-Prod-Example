@@ -78,7 +78,7 @@ class ModelTuner:
         self.log(f"JSON metrics saved to {self.json_file}")
 
     def run(self, train_ds, val_ds, test_ds=None, max_trials=2, executions_per_trial=1,
-            epochs=2, patience=5, seed=42): # quitar el hardcoding de max traisl (agregarki en el init); y y 1 y 20 epochs
+            epochs=2, patience=5, seed=42):
         
         # seed
         set_seed(seed)

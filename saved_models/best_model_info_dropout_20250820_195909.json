@@ -1,0 +1,15 @@
+{
+    "name": "dropout",
+    "best_hyperparameters": {
+        "dropout_rate": 0.1,
+        "learning_rate": 0.002051386718289359
+    },
+    "val_metrics": {
+        "loss": 0.20652836561203003,
+        "accuracy": 0.9473684430122375,
+        "precision": 0.9090909361839294,
+        "recall": 0.9523809552192688,
+        "f1_score": 0.9302325686800641
+    },
+    "f1_score": 0.9302325686800641
+}

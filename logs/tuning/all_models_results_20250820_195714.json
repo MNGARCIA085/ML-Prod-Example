@@ -1,0 +1,39 @@
+{
+    "baseline": {
+        "best_hyperparameters": {
+            "learning_rate": 0.00544853401907757
+        },
+        "val_metrics": {
+            "loss": 0.3886096477508545,
+            "accuracy": 0.8771929740905762,
+            "precision": 0.9375,
+            "recall": 0.7142857313156128,
+            "f1_score": 0.8108108168739009
+        }
+    },
+    "no_dropout": {
+        "best_hyperparameters": {
+            "learning_rate": 0.00544853401907757
+        },
+        "val_metrics": {
+            "loss": 0.309354692697525,
+            "accuracy": 0.8947368264198303,
+            "precision": 0.8947368264198303,
+            "recall": 0.8095238208770752,
+            "f1_score": 0.8499999941929359
+        }
+    },
+    "dropout": {
+        "best_hyperparameters": {
+            "dropout_rate": 0.1,
+            "learning_rate": 0.002051386718289359
+        },
+        "val_metrics": {
+            "loss": 0.1975359320640564,
+            "accuracy": 0.9122806787490845,
+            "precision": 0.8999999761581421,
+            "recall": 0.8571428656578064,
+            "f1_score": 0.8780487686119562
+        }
+    }
+}

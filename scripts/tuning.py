@@ -73,7 +73,7 @@ def get_best_model(train_ds, val_ds, max_trials, epochs, models_to_tune, recall_
         if recall >= recall_threshold:
             if f1 > best_f1:
                 best_f1 = f1
-                best_model_ecall = recall
+                best_model_recall = recall
                 best_model_info = {
                     "name": model_name,
                     "model": best_model,
@@ -84,7 +84,7 @@ def get_best_model(train_ds, val_ds, max_trials, epochs, models_to_tune, recall_
         print(f"{model_name} best hyperparameters: {best_hp.values}")
         print(f"{model_name} val metrics: {val_metrics}\n")
 
-    return results, best_model_info, best_f1, best_model_recall
+    return results, best_model_info, best_model_recall, best_f1
 
 
 

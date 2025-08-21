@@ -14,8 +14,8 @@ class BreastCancerPreprocessorNormalized(BasePreprocessor):
     - Saves fitted scaler + feature column order for inference consistency.
     """
 
-    def __init__(self, batch_size=32, test_size=0.2, val_size=0.1, random_state=42):
-        super().__init__(batch_size, test_size, val_size, random_state)
+    def __init__(self, batch_size=32, val_size=0.1, random_state=42):
+        super().__init__(batch_size, val_size, random_state)
         self.scaler = None
         self.encoder = None 
         self.feature_columns = None
@@ -36,7 +36,7 @@ class BreastCancerPreprocessorNormalized(BasePreprocessor):
         return features, labels
     
 
-    def post_split_transform(self, X_train, X_val, X_test):
+    def post_split_transform(self, X_train, X_val):
         # Save column order for inference
         self.feature_columns = list(X_train.columns)
 
@@ -56,9 +56,5 @@ class BreastCancerPreprocessorNormalized(BasePreprocessor):
             columns=X_val.columns,
             index=X_val.index
         )
-        X_test_scaled = pd.DataFrame(
-            self.scaler.transform(X_test),
-            columns=X_test.columns,
-            index=X_test.index
-        )
-        return X_train_scaled, X_val_scaled, X_test_scaled
+
+        return X_train_scaled, X_val_scaled

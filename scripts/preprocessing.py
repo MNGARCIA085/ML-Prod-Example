@@ -33,12 +33,12 @@ def main(prep_style: str = None):
             preprocessor = BreastCancerPreprocessor(batch_size=16)
             print("\n=== Using non-standardized preprocessing ===")
 
-        train_ds, val_ds, test_ds = preprocessor.get_datasets(BREAST_CANCER_CSV_RAW)
+        train_ds, val_ds = preprocessor.get_datasets(BREAST_CANCER_CSV_RAW)
 
         # Print only the first element of the first batch
         print_first_element(train_ds, "Train")
         print_first_element(val_ds, "Validation")
-        print_first_element(test_ds, "Test")
+
 
 
 if __name__ == "__main__":

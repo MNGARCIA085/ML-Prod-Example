@@ -22,30 +22,9 @@ def save_logs(results, timestamp):
     print(f"All models results saved to {json_file}")
 
 
-# save best model (in a model format like .h5 and other info in a json file)
-def save_best_modelv0(best_model_info, timestamp, recall, best_f1):
-    # Note I might not have a best model (one that its recall is lesse than the threshold)
-    os.makedirs("saved_models", exist_ok=True)
-    best_model_path = f"saved_models/best_model_{best_model_info['name']}_{timestamp}.h5"
-    best_model_info["model"].save(best_model_path)
-    print(f"Best model saved to {best_model_path}")
-
-    # Save JSON with best model info (hyperparameters + metrics)
-    best_json_file = f"saved_models/best_model_info_{best_model_info['name']}_{timestamp}.json"
-    with open(best_json_file, "w") as f:
-        json.dump({
-            "name": best_model_info["name"],
-            "best_hyperparameters": best_model_info["best_hyperparameters"],
-            "val_metrics": best_model_info["val_metrics"],
-            "f1_score": best_f1
-        }, f, indent=4)
-    print(f"Best model info saved to {best_json_file}")
-
-    print(f"\nBest model according to our criterion: {best_model_info['name']}, F1={best_f1:.4f}, Recall={recall:.4f}")
-        # recall greater than a threshold and then greater f1-score
 
 
-
+# save best model
 def save_best_model(best_model_info, timestamp, recall, best_f1, preprocessor=None):
     os.makedirs("saved_models", exist_ok=True)
 
@@ -91,11 +70,6 @@ def save_best_model(best_model_info, timestamp, recall, best_f1, preprocessor=No
 
     print(f"\nBest model according to our criterion: {best_model_info['name']}, "
           f"F1={best_f1:.4f}, Recall={recall:.4f}")
-
-
-
-
-
 
 
 
@@ -159,7 +133,7 @@ def main():
     # Prepare data
     filepath = BREAST_CANCER_CSV_RAW
     preprocessor = BreastCancerPreprocessorNormalized(batch_size=32)
-    train_ds, val_ds, test_ds = preprocessor.get_datasets(filepath)
+    train_ds, val_ds = preprocessor.get_datasets(filepath)
 
     models_to_tune = []
     if args.baseline or tune_all:
@@ -194,10 +168,4 @@ if __name__ == "__main__":
 
 
 
-"""
-best_model_info = choose_best_model(all_results, threshold=0.7)
-
-if best_model_info is None:
-    print("⚠️ No model met the threshold. Exiting...")
-    return None
-"""
+# Note. I might not have a best model if none of them is better than the recall threshold

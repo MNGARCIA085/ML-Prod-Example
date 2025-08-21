@@ -71,7 +71,7 @@ def main():
 
     for data_variant in data_variants:
         preprocessor = get_preprocessor(data_variant, batch_size)
-        train_ds, val_ds, test_ds = preprocessor.get_datasets(filepath)
+        train_ds, val_ds = preprocessor.get_datasets(filepath)
 
         for model_name in models_to_train:
             print(f"Training model: {model_name} | data: {data_variant}")

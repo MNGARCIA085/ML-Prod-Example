@@ -6,7 +6,6 @@ import tensorflow as tf
 import kerastuner as kt
 from datetime import datetime
 import time
-from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
 from .utils import MetricsLogger,HistoryCapture,compute_f1,set_seed
 
 
@@ -119,6 +118,7 @@ class ModelTuner:
         self.metric_names = best_model.metrics_names
         self.log(f"Best hyperparameters: {best_hp.values}")
 
+
         # retrain best model for full history
         history_cb = HistoryCapture()
         best_model.fit(train_ds, validation_data=val_ds, epochs=epochs,
@@ -133,8 +133,6 @@ class ModelTuner:
                 "recall": val_metrics[3],
                 "f1_score": compute_f1(val_metrics[2], val_metrics[3])
         }
-
-
 
         # extra hyperparameters
         trained_epochs = len(history_cb.history["loss"])

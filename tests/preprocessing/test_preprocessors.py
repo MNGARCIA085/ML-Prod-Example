@@ -43,13 +43,13 @@ def sample_csv():
 # Base preprocessor tests
 # -----------------------------
 def test_get_datasets(sample_csv):
-    preprocessor = TestPreprocessor(batch_size=2, test_size=0.2, val_size=0.25, random_state=0)
-    train_ds, val_ds, test_ds = preprocessor.get_datasets(sample_csv)
+    preprocessor = TestPreprocessor(batch_size=2, val_size=0.25, random_state=0)
+    train_ds, val_ds = preprocessor.get_datasets(sample_csv)
 
     # Check types
     assert isinstance(train_ds, tf.data.Dataset)
     assert isinstance(val_ds, tf.data.Dataset)
-    assert isinstance(test_ds, tf.data.Dataset)
+
 
     # Check batch shapes and dtypes
     for batch in train_ds.take(1):
@@ -60,14 +60,14 @@ def test_get_datasets(sample_csv):
 
 
 def test_splits_sum_correctly(sample_csv):
-    preprocessor = TestPreprocessor(batch_size=2, test_size=0.2, val_size=0.25, random_state=0)
-    preprocessor.load_data(sample_csv)  # <-- add this line
+    preprocessor = TestPreprocessor(batch_size=2, val_size=0.25, random_state=0)
+    preprocessor.load_data(sample_csv)
     features, labels = preprocessor.preprocess_data()
-    X_train, X_val, X_test, y_train, y_val, y_test = preprocessor.split_data(features, labels)
+    X_train, X_val, y_train, y_val = preprocessor.split_data(features, labels)
 
     total_rows = len(features)
-    assert len(X_train) + len(X_val) + len(X_test) == total_rows
-    assert len(y_train) + len(y_val) + len(y_test) == total_rows
+    assert len(X_train) + len(X_val) == total_rows
+    assert len(y_train) + len(y_val) == total_rows
 
 
 
@@ -76,7 +76,7 @@ def test_splits_sum_correctly(sample_csv):
 # -----------------------------
 def test_normalization_applied(sample_csv):  # use the same fixture
     preprocessor = BreastCancerPreprocessorNormalized(batch_size=4)
-    train_ds, val_ds, test_ds = preprocessor.get_datasets(sample_csv)
+    train_ds, val_ds = preprocessor.get_datasets(sample_csv)
 
     x_batch, _ = next(iter(train_ds))
     mean_val = float(x_batch.numpy().mean())

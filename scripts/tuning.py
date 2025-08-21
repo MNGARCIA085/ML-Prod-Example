@@ -26,10 +26,10 @@ def save_logs(results, timestamp):
 
 # save best model
 def save_best_model(best_model_info, timestamp, recall, best_f1, preprocessor=None):
-    os.makedirs("saved_models", exist_ok=True)
+    os.makedirs("outputs/saved_models", exist_ok=True)
 
     # Create experiment folder
-    exp_dir = f"saved_models/experiment_{best_model_info['name']}_{timestamp}"
+    exp_dir = f"outputs/saved_models/experiment_{best_model_info['name']}_{timestamp}"
     os.makedirs(exp_dir, exist_ok=True)
 
     # Save model

@@ -2,11 +2,11 @@
 import argparse
 from src.data.preprocessor import BreastCancerPreprocessor
 from src.data.preprocessor_with_normalization import BreastCancerPreprocessorNormalized
-from src.training.train_base_class import ModelTrainer
+from src.training.trainer import ModelTrainer
 from src.models.baseline import build_compile_baseline
 from src.models.model_dropout import build_compile_dropout
 from src.models.model_no_dropout import build_compile_no_dropout
-from src.training.utils import get_callbacks
+from src.common.callbacks import get_callbacks
 from src.config.constants import BREAST_CANCER_CSV_RAW
 
 

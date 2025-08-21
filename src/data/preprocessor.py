@@ -23,3 +23,6 @@ class BreastCancerPreprocessor(BasePreprocessor):
         labels = df['diagnosis'].map({'M': 1, 'B': 0})
         features = df.drop(columns=['id', 'diagnosis'])
         return features, labels
+
+
+#https://chatgpt.com/c/68a65eea-2794-8324-b403-873c094f7d7c

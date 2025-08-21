@@ -1,4 +1,3 @@
-from .utils import get_early_stopping
 from .utils import make_run_dirs
 from .utils import extract_optimizer_info
 from .utils import log_message

@@ -1,5 +1,6 @@
 import argparse
 import json
+import joblib
 import os
 from datetime import datetime
 from sklearn.metrics import f1_score
@@ -22,7 +23,7 @@ def save_logs(results, timestamp):
 
 
 # save best model (in a model format like .h5 and other info in a json file)
-def save_best_model(best_model_info, timestamp, recall, best_f1):
+def save_best_modelv0(best_model_info, timestamp, recall, best_f1):
     # Note I might not have a best model (one that its recall is lesse than the threshold)
     os.makedirs("saved_models", exist_ok=True)
     best_model_path = f"saved_models/best_model_{best_model_info['name']}_{timestamp}.h5"
@@ -42,6 +43,60 @@ def save_best_model(best_model_info, timestamp, recall, best_f1):
 
     print(f"\nBest model according to our criterion: {best_model_info['name']}, F1={best_f1:.4f}, Recall={recall:.4f}")
         # recall greater than a threshold and then greater f1-score
+
+
+
+def save_best_model(best_model_info, timestamp, recall, best_f1, preprocessor=None):
+    os.makedirs("saved_models", exist_ok=True)
+
+    # Create experiment folder
+    exp_dir = f"saved_models/experiment_{best_model_info['name']}_{timestamp}"
+    os.makedirs(exp_dir, exist_ok=True)
+
+    # Save model
+    model_path = os.path.join(exp_dir, "model.h5")
+    best_model_info["model"].save(model_path)
+    print(f"Model saved to {model_path}")
+
+    # Save scaler (if exists)
+    if preprocessor and getattr(preprocessor, "scaler", None) is not None:
+        scaler_path = os.path.join(exp_dir, "scaler.pkl")
+        joblib.dump(preprocessor.scaler, scaler_path)
+        print(f"Scaler saved to {scaler_path}")
+
+    # Save encoder (if exists)
+    if preprocessor and getattr(preprocessor, "encoder", None) is not None:
+        encoder_path = os.path.join(exp_dir, "encoder.pkl")
+        joblib.dump(preprocessor.encoder, encoder_path)
+        print(f"Encoder saved to {encoder_path}")
+
+    # Save feature order (columns)
+    if preprocessor and getattr(preprocessor, "feature_columns", None) is not None:
+        columns_path = os.path.join(exp_dir, "columns.json")
+        with open(columns_path, "w") as f:
+            json.dump(preprocessor.feature_columns, f, indent=4)
+        print(f"Feature columns saved to {columns_path}")
+
+    # Save small metadata file (optional but useful)
+    meta_path = os.path.join(exp_dir, "metadata.json")
+    with open(meta_path, "w") as f:
+        json.dump({
+            "name": best_model_info["name"],
+            "best_hyperparameters": best_model_info["best_hyperparameters"],
+            "val_metrics": best_model_info["val_metrics"],
+            "f1_score": best_f1,
+            "recall": recall
+        }, f, indent=4)
+    print(f"Metadata saved to {meta_path}")
+
+    print(f"\nBest model according to our criterion: {best_model_info['name']}, "
+          f"F1={best_f1:.4f}, Recall={recall:.4f}")
+
+
+
+
+
+
 
 
 
@@ -125,7 +180,7 @@ def main():
     save_logs(results, timestamp)
 
     # Save the best model automatically
-    save_best_model(best_model_info, timestamp, recall, best_f1)
+    save_best_model(best_model_info, timestamp, recall, best_f1, preprocessor)
     
 
     # return

@@ -27,6 +27,7 @@ class BasePreprocessor:
         self.val_size = val_size
         self.random_state = random_state
 
+
     def load_data(self, filepath):
         self.df = pd.read_csv(filepath)
 

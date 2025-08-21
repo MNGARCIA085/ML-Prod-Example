@@ -1,0 +1,24 @@
+[
+    {
+        "timestamp": "20250821_160246",
+        "log_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250821_160246.log",
+        "json_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250821_160246.json",
+        "summary": {
+            "val_metrics": {
+                "loss": 0.10724051296710968,
+                "accuracy": 0.9824561476707458,
+                "precision": 1.0,
+                "recall": 0.9523809552192688,
+                "f1_score": 0.9756097525897651
+            },
+            "best_hyperparameters": {
+                "dropout_rate": 0.4,
+                "learning_rate": 0.0033276572881909957,
+                "trained_epochs": 2,
+                "batch_size": 32,
+                "optimizer": "Adam",
+                "final_learning_rate": 0.0033276572357863188
+            }
+        }
+    }
+]

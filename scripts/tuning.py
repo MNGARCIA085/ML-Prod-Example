@@ -75,7 +75,7 @@ def save_best_model(best_model_info, timestamp, recall, best_f1, preprocessor=No
 
 
 # get the best model and its data
-def get_best_model(train_ds, val_ds, max_trials, epochs, models_to_tune, recall_threshold=0.2):
+def get_best_modelv0(train_ds, val_ds, max_trials, epochs, models_to_tune, recall_threshold=0.2):
     results = {}
     best_model_info = None
     best_f1 = -1.0
@@ -118,6 +118,80 @@ def get_best_model(train_ds, val_ds, max_trials, epochs, models_to_tune, recall_
 
 
 
+
+
+def tune_models(train_ds, val_ds, max_trials, epochs, models_to_tune):
+    """
+    Run tuning for each model and return JSON-serializable results 
+    (no Keras models included).
+    """
+    results = {}
+    models = {}  # keep actual models separately
+
+    for model_name, build_fn in models_to_tune:
+        print(f"\n=== Tuning {model_name} model ===")
+        tuner = ModelTuner(build_model_fn=build_fn)
+        best_model, best_hp, val_metrics = tuner.run(
+            train_ds,
+            val_ds,
+            max_trials=max_trials,
+            epochs=epochs
+        )
+
+        # JSON-safe results
+        results[model_name] = {
+            "best_hyperparameters": best_hp.values,
+            "val_metrics": val_metrics,
+        }
+
+        # keep model in a separate dict
+        models[model_name] = best_model
+
+        print(f"{model_name} best hyperparameters: {best_hp.values}")
+        print(f"{model_name} val metrics: {val_metrics}\n")
+
+    return results, models
+
+
+def select_best_model(results, models, recall_threshold=0.2):
+    """
+    Choose the best model according to recall + F1.
+    Only here we attach the actual model object.
+    """
+    best_model_info = None
+    best_f1 = -1.0
+    best_model_recall = -1.0
+
+    for model_name, info in results.items():
+        recall = info["val_metrics"].get("recall", 0.0)
+        f1 = info["val_metrics"].get("f1_score", 0.0)
+
+        if recall >= recall_threshold and f1 > best_f1:
+            best_f1 = f1
+            best_model_recall = recall
+            best_model_info = {
+                "name": model_name,
+                "model": models[model_name],  # attach model here
+                "val_metrics": info["val_metrics"],
+                "best_hyperparameters": info["best_hyperparameters"]
+            }
+
+    return best_model_info, best_model_recall, best_f1
+
+
+def get_best_model(train_ds, val_ds, max_trials, epochs, models_to_tune, recall_threshold=0.2):
+    results, models = tune_models(train_ds, val_ds, max_trials, epochs, models_to_tune)
+    best_model_info, best_model_recall, best_f1 = select_best_model(results, models, recall_threshold)
+    return results, best_model_info, best_model_recall, best_f1
+
+
+
+
+
+
+
+
+
 # MAIN
 def main():
     parser = argparse.ArgumentParser(description="Tune multiple models with flags.")
@@ -145,16 +219,24 @@ def main():
 
 
     # get best model
-    results, best_model_info, recall, best_f1 = get_best_model(train_ds, val_ds, args.max_trials,args.epochs, models_to_tune)
+    #results, best_model_info, recall, best_f1 = get_best_model(train_ds, val_ds, args.max_trials,args.epochs, models_to_tune)
+    results, models = tune_models(train_ds, val_ds, args.max_trials, args.epochs, models_to_tune)
+    best_model_info, recall, best_f1 = select_best_model(results, models, recall_threshold=0.2)
+
 
     # timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
+
     # Save all results into a single JSON
     save_logs(results, timestamp)
 
+
     # Save the best model automatically
     save_best_model(best_model_info, timestamp, recall, best_f1, preprocessor)
+
+
+    # evaluation!!!!!!!!!!!!!!!!!!!!
     
 
     # return

@@ -1,0 +1,15 @@
+{
+    "name": "baseline",
+    "best_hyperparameters": {
+        "learning_rate": 0.0033276572881909957
+    },
+    "val_metrics": {
+        "loss": 0.04650351032614708,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 0.999999995
+    },
+    "f1_score": 0.999999995,
+    "recall": 1.0
+}

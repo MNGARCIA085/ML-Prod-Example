@@ -34,7 +34,7 @@ def get_last_experiment(base_dir: str) -> str:
 
 
 # save metrics
-def save_metrics(experiment_path: str, eval_results, conf_matrix):
+def save_metrics(experiment_path: str, eval_results, conf_matrix, fpr, tpr, thresholds, roc_auc):
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     exp_name = os.path.basename(experiment_path)
@@ -47,6 +47,10 @@ def save_metrics(experiment_path: str, eval_results, conf_matrix):
         "timestamp": timestamp,
         "evaluation_results": eval_results,
         "confusion_matrix": conf_matrix.tolist(),
+        "fpr": fpr.tolist(),                        
+        "tpr": tpr.tolist(),
+        "thresholds": thresholds.tolist(),
+        "roc_auc":roc_auc,
     }
 
     with open(filepath, "w") as f:
@@ -67,10 +71,10 @@ def main():
     else:
         raise ValueError("Either --experiment or --last must be provided.")
 
-    experiment_path, res, conf_matrix = evaluate(exp_path)
+    experiment_path, res, conf_matrix, fpr, tpr, thresholds, roc_auc = evaluate(exp_path)
 
     # save to file
-    save_metrics(experiment_path, res, conf_matrix)
+    save_metrics(experiment_path, res, conf_matrix, fpr, tpr, thresholds, roc_auc)
 
 
 if __name__ == "__main__":
@@ -78,27 +82,3 @@ if __name__ == "__main__":
 
 
 
-"""
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.metrics import confusion_matrix
-
-cm = confusion_matrix(y_test, y_pred)
-
-plt.figure(figsize=(5,4))
-sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
-            xticklabels=["Pred_B", "Pred_M"],
-            yticklabels=["Actual_B", "Actual_M"])
-plt.ylabel("Actual")
-plt.xlabel("Predicted")
-plt.title("Confusion Matrix")
-plt.show()
-
-
-from sklearn.metrics import ConfusionMatrixDisplay
-
-cm = confusion_matrix(y_test, y_pred)
-disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["B", "M"])
-disp.plot(cmap="Blues")
-plt.show()
-"""

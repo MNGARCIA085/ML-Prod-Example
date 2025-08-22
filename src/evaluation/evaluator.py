@@ -3,6 +3,7 @@ import joblib
 import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
+from sklearn.metrics import roc_curve, auc
 from src.config.constants import BREAST_CANCER_CSV_RAW_TEST
 
 
@@ -61,8 +62,12 @@ def evaluate(experiment_path: str):
     conf_matrix = tf.math.confusion_matrix(y_test, y_pred)
     print("Confusion matrix:\n", conf_matrix.numpy())
 
-    return experiment_path, res, conf_matrix.numpy()
+    
+    # ROC curve
+    fpr, tpr, thresholds = roc_curve(y_test, y_pred_prob)
+    roc_auc = auc(fpr, tpr)
 
-    # save to file
-    #save_metrics(experiment_path, res, conf_matrix.numpy())
+    return experiment_path, res, conf_matrix.numpy(), fpr, tpr, thresholds, roc_auc
+
+
 

@@ -48,9 +48,7 @@ def main():
     models_to_train = args.models or ["baseline", "no_dropout", "dropout"]
     data_variants = args.data_variants or ["simple", "standardize"]
 
-    # hyperparams
-    batch_size = args.batch_size
-    dropout_rate = args.dropout_rate
+
 
     # callbacks
     callbacks = get_callbacks(
@@ -63,22 +61,22 @@ def main():
     model_fns = {
         "baseline": build_compile_baseline,
         "no_dropout": build_compile_no_dropout,
-        "dropout": lambda: build_compile_dropout(dropout_rate=dropout_rate)
+        "dropout": lambda: build_compile_dropout(dropout_rate=args.dropout_rate)
     }
 
     experiments = []
 
 
     for data_variant in data_variants:
-        preprocessor = get_preprocessor(data_variant, batch_size)
+        preprocessor = get_preprocessor(data_variant, args.batch_size)
         train_ds, val_ds = preprocessor.get_datasets(filepath)
 
         for model_name in models_to_train:
             print(f"Training model: {model_name} | data: {data_variant}")
 
-            hyperparams = {"batch_size": batch_size}
+            hyperparams = {"batch_size": args.batch_size}
             if model_name == "dropout":
-                hyperparams["dropout_rate"] = dropout_rate
+                hyperparams["dropout_rate"] = args.dropout_rate
 
             trainer = ModelTrainer(
                 model_fn=model_fns[model_name],

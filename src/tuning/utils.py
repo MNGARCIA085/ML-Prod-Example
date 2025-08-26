@@ -1,7 +1,17 @@
 import random
 import numpy as np
+import os 
+import json
 import tensorflow as tf
 
+
+
+# seed
+def set_seed(seed=42):
+    """Set seed for random, numpy, and tensorflow."""
+    random.seed(seed)
+    np.random.seed(seed)
+    tf.random.set_seed(seed)
 
 
 class MetricsLogger(tf.keras.callbacks.Callback):
@@ -36,10 +46,10 @@ def compute_f1(precision, recall):
     return f1
 
 
-
-# seed
-def set_seed(seed=42):
-    """Set seed for random, numpy, and tensorflow."""
-    random.seed(seed)
-    np.random.seed(seed)
-    tf.random.set_seed(seed)
+# save results
+def save_logs(results, timestamp):
+    os.makedirs("logs/tuning", exist_ok=True)
+    json_file = f"logs/tuning/all_models_results_{timestamp}.json"
+    with open(json_file, "w") as f:
+        json.dump(results, f, indent=4)
+    print(f"All models results saved to {json_file}")

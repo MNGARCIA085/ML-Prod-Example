@@ -6,7 +6,6 @@ from src.experiments.models import select_best_model, save_best_model
 def tune_models(train_ds, val_ds, max_trials, epochs, models_to_tune):
     """
     Run tuning for each model and return JSON-serializable results 
-    (no Keras models included).
     """
     results = {}
     models = {}  # keep actual models separately
@@ -43,3 +42,6 @@ def get_best_model(train_ds, val_ds, max_trials, epochs, models_to_tune, recall_
     results, models = tune_models(train_ds, val_ds, max_trials, epochs, models_to_tune)
     best_model_info, best_model_recall, best_f1 = select_best_model(results, models, recall_threshold)
     return results, best_model_info, best_model_recall, best_f1
+
+
+# hacer una nueva vesión donde puedo incluir preprocesamiento

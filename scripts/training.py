@@ -8,18 +8,12 @@ from src.models.model_dropout import build_compile_dropout
 from src.models.model_no_dropout import build_compile_no_dropout
 from src.common.callbacks import get_callbacks
 from src.config.constants import BREAST_CANCER_CSV_RAW
+from src.training.experiment_runner import run_experiment
+from src.models.factory import get_model_fns
+from src.data.utils import get_preprocessors
 
 
 
-
-def get_preprocessor(name, batch_size):
-    mapping = {
-        "simple": BreastCancerPreprocessor(batch_size=batch_size),
-        "standardize": BreastCancerPreprocessorNormalized(batch_size=batch_size),
-    }
-    if name not in mapping:
-        raise ValueError(f"Unknown data variant: {name}")
-    return mapping[name]
 
 
 def main():
@@ -36,10 +30,9 @@ def main():
                         help="Data variants to use (default: all)")
 
     # hyperparams
-    parser.add_argument("--batch_size", type=int, default=64,
-                    help="Batch size for training (default: 64)")
-    parser.add_argument("--dropout_rate", type=float, default=0.2,
-                    help="Dropout rate (default: 0.2)")
+    parser.add_argument("--batch_size", type=int, default=64, help="Batch size for training (default: 64)")
+    parser.add_argument("--epochs", type=int, default=2, help="Epochs (default: 2)")
+    parser.add_argument("--dropout_rate", type=float, default=0.2, help="Dropout rate (default: 0.2)")
     
 
     args = parser.parse_args()
@@ -48,7 +41,11 @@ def main():
     models_to_train = args.models or ["baseline", "no_dropout", "dropout"]
     data_variants = args.data_variants or ["simple", "standardize"]
 
-
+    # preprocessors
+    preprocessors = get_preprocessors(data_variants, args.batch_size)
+    
+    # Model function mapping
+    model_fns = get_model_fns(args.dropout_rate)
 
     # callbacks
     callbacks = get_callbacks(
@@ -56,41 +53,15 @@ def main():
         use_reduce_lr=False
     )
 
+
+    # run experiments
+    experiments = run_experiment(model_fns,
+                             preprocessors, filepath,
+                             epochs=args.epochs, callbacks=callbacks,
+                             batch_size=args.batch_size,
+                             dropout_rate=args.dropout_rate)
+
     
-    # Model function mapping
-    model_fns = {
-        "baseline": build_compile_baseline,
-        "no_dropout": build_compile_no_dropout,
-        "dropout": lambda: build_compile_dropout(dropout_rate=args.dropout_rate)
-    }
-
-    experiments = []
-
-
-    for data_variant in data_variants:
-        preprocessor = get_preprocessor(data_variant, args.batch_size)
-        train_ds, val_ds = preprocessor.get_datasets(filepath)
-
-        for model_name in models_to_train:
-            print(f"Training model: {model_name} | data: {data_variant}")
-
-            hyperparams = {"batch_size": args.batch_size}
-            if model_name == "dropout":
-                hyperparams["dropout_rate"] = args.dropout_rate
-
-            trainer = ModelTrainer(
-                model_fn=model_fns[model_name],
-                train_ds=train_ds,
-                val_ds=val_ds,
-                model_name=model_name,
-                data_variant=data_variant,
-                epochs=2,
-                hyperparameters=hyperparams,
-                callbacks=callbacks
-            )
-            results = trainer.train()
-            experiments.append(results)
-
     # Pick top 2 by validation F1
     top_models = sorted(experiments, key=lambda x: x["val_f1"], reverse=True)[:2]
 

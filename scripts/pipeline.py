@@ -19,11 +19,12 @@ from src.experiments.manager import get_last_experiment
 from src.tuning.workflow import get_best_model
 from src.tuning.utils import save_logs
 from src.experiments.models import save_best_model
-
+from src.training.experiment_runner import run_experiment
+from src.models.factory import get_model_fns
+from src.data.utils import get_preprocessors
 
 # path where all experiments are stored
 from src.config.constants import SAVED_MODELS_DIR
-
 
 
 
@@ -35,26 +36,26 @@ def main():
     models_to_train = ["baseline", "no_dropout", "dropout"]
     batch_size = 32 # maybe then change to args
     dropout_rate = 0.1
+    epochs = 2
 
 
 
     # --------------- Data Loading and Preprocessing--------------------
     filepath = BREAST_CANCER_CSV_RAW
-    preprocessor = BreastCancerPreprocessorNormalized(batch_size=32)
+    preprocessor = BreastCancerPreprocessorNormalized(batch_size=batch_size)
     train_ds, val_ds = preprocessor.get_datasets(filepath)
+    # quizás luego no xq lo saco de prepreocessors
 
 
 
     # ----------------------- Training ---------------------------------
 
-    experiments = []
-
+    # preprocessors
+    data_variants = ["simple", "standardize"] # maybe only standrazie later
+    preprocessors = get_preprocessors(data_variants, batch_size)
+    
     # Model function mapping
-    model_fns = {
-        "baseline": build_compile_baseline,
-        "no_dropout": build_compile_no_dropout,
-        "dropout": lambda: build_compile_dropout(dropout_rate=dropout_rate)
-    }
+    model_fns = get_model_fns(dropout_rate)
 
     # callbacks
     callbacks = get_callbacks(
@@ -62,27 +63,15 @@ def main():
         use_reduce_lr=False
     )
 
-
-    for model_name in models_to_train:
-        print(f"Training model: {model_name} | data: standardize")
-        hyperparams = {"batch_size": batch_size}
-        if model_name == "dropout":
-            hyperparams["dropout_rate"] = dropout_rate
-
-        trainer = ModelTrainer(
-            model_fn=model_fns[model_name],
-            train_ds=train_ds,
-            val_ds=val_ds,
-            model_name=model_name,
-            data_variant='standardize',
-            epochs=2,
-            hyperparameters=hyperparams,
-            callbacks=callbacks
-        )
-        results = trainer.train()
-        experiments.append(results)
+    # run experiments
+    experiments = run_experiment(model_fns,
+                             preprocessors, filepath,
+                             epochs=epochs, callbacks=callbacks,
+                             batch_size=batch_size,
+                             dropout_rate=dropout_rate)
 
 
+    
 
     #---------------Select 3 best models for hyperparameter tuning (models to tune)------------------
     # best f1 given the ones that passed recall test
@@ -94,7 +83,8 @@ def main():
 
 
 
-    #..................Hyperparameter tuning----------------------------------------
+    #---------------------------------Hyperparameter tuning-------------------------------------------
+    
     # get best model (this is the fn. that tunes the model)
     max_trials = 1
     epochs = 5

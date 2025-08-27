@@ -1,52 +1,60 @@
 import argparse
-import json
-import os
 from datetime import datetime
-from src.data.preprocessor import BreastCancerPreprocessor
-from src.data.preprocessor_with_normalization import BreastCancerPreprocessorNormalized
-from src.models.model_dropout import build_model_with_dropout_tuner
-from src.models.model_no_dropout import build_model_no_dropout_tuner
-from src.models.baseline import baseline_with_tuner
 from src.config.constants import BREAST_CANCER_CSV_RAW
-from src.tuning.workflow import tune_models, get_best_model
+from src.tuning.workflow import get_best_model
 from src.experiments.models import save_best_model
 from src.tuning.utils import save_logs
-
-
+from src.data.utils import get_preprocessors
+from src.models.factory import get_model_fns_tuner
 
 
 # MAIN
 def main():
-    parser = argparse.ArgumentParser(description="Tune multiple models with flags.")
-    parser.add_argument("--baseline", action="store_true", help="Tune baseline model")
-    parser.add_argument("--no_dropout", action="store_true", help="Tune model without dropout")
-    parser.add_argument("--dropout", action="store_true", help="Tune model with dropout")
-    parser.add_argument("--max_trials", type=int, default=3, help="Max trials for Keras Tuner")
-    parser.add_argument("--epochs", type=int, default=5, help="Max epochs per trial") #better default: 20
-    parser.add_argument("--batch_size", type=int, default=32, help="Batch Size")
+    parser = argparse.ArgumentParser(description="Tune models with different data preprocessing variants.")
+
+    # Optional selection of models and data variants
+    parser.add_argument(
+        "--models",
+        nargs="+",
+        choices=["baseline", "no_dropout", "dropout"],
+        help="Models to tune (default: all)"
+    )
+    parser.add_argument(
+        "--data_variants",
+        nargs="+",
+        choices=["simple", "standardize"],
+        help="Data preprocessing variants to use (default: all)"
+    )
+
+    parser.add_argument("--batch_size", type=int, default=64, help="Batch size for preprocessing (default: 64)")
+    parser.add_argument("--epochs", type=int, default=2, help="Number of epochs for tuning (default: 2)")
+    parser.add_argument("--max_trials", type=int, default=1, help="Max tuning trials (default: 1)")
+
     args = parser.parse_args()
 
-    tune_all = not (args.baseline or args.no_dropout or args.dropout)
-
-    # Prepare data
+    # Filepath
     filepath = BREAST_CANCER_CSV_RAW
-    preprocessor = BreastCancerPreprocessorNormalized(batch_size=args.batch_size)
-    train_ds, val_ds = preprocessor.get_datasets(filepath)
-
-    models_to_tune = []
-    if args.baseline or tune_all:
-        models_to_tune.append(("baseline", baseline_with_tuner))
-    if args.no_dropout or tune_all:
-        models_to_tune.append(("no_dropout", build_model_no_dropout_tuner))
-    if args.dropout or tune_all:
-        models_to_tune.append(("dropout", build_model_with_dropout_tuner))
-
 
     # timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    # get best model
-    results, best_model_info, recall, best_f1 = get_best_model(train_ds, val_ds, args.max_trials,args.epochs, models_to_tune)
+    # preprocessors
+    all_variants = ["simple", "standardize"]
+    selected_variants = args.data_variants or all_variants
+    preprocessors = get_preprocessors(selected_variants, args.batch_size)
+
+
+    # Models
+    all_models = ["baseline", "no_dropout", "dropout"]
+    selected_models = args.models or all_models
+    model_fns = get_model_fns_tuner()
+    # filter only selected models
+    model_fns = {name: fn for name, fn in model_fns.items() if name in selected_models}
+    
+    # get best (model + prep)
+    results, best_model_info, preprocessor, recall, best_f1 = get_best_model(preprocessors, model_fns, filepath, max_trials=1, 
+                                                               epochs=args.epochs, recall_threshold=0.2)
+
 
     # Save the best model automatically
     save_best_model(best_model_info, timestamp, recall, best_f1, preprocessor)
@@ -66,3 +74,4 @@ if __name__ == "__main__":
 
 
 # Note. I might not have a best model if none of them is better than the recall threshold
+# python -m scripts.tuning --models baseline dropout --data_variants simple

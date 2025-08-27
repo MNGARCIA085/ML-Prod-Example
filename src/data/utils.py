@@ -3,7 +3,7 @@ from .preprocessor_with_normalization import BreastCancerPreprocessorNormalized
 
 
 
-# get preprocessor
+# get a single preprocessor
 def get_preprocessor(name, batch_size):
     """
     Return a preprocessor instance for the given data variant.

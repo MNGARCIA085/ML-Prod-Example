@@ -1,0 +1,59 @@
+{
+    "model_name": "baseline_with_tuner",
+    "timestamp": "20250828_164913",
+    "elapsed_time_sec": 3.192943811416626,
+    "best_hyperparameters": {
+        "learning_rate": 0.00544853401907757,
+        "trained_epochs": 2,
+        "batch_size": 32,
+        "optimizer": "Adam",
+        "final_learning_rate": 0.005448534153401852
+    },
+    "environment": {
+        "python_version": "3.10.12",
+        "tensorflow_version": "2.19.0",
+        "keras_version": "3.11.1",
+        "os": "Linux-6.8.0-65-generic-x86_64-with-glibc2.35"
+    },
+    "history": {
+        "accuracy": [
+            0.884765625,
+            0.890625
+        ],
+        "loss": [
+            1.1282600164413452,
+            0.9348069429397583
+        ],
+        "precision": [
+            0.84375,
+            0.839195966720581
+        ],
+        "recall": [
+            0.8481675386428833,
+            0.8743455410003662
+        ],
+        "val_accuracy": [
+            0.8771929740905762,
+            0.8771929740905762
+        ],
+        "val_loss": [
+            0.6568283438682556,
+            0.5693478584289551
+        ],
+        "val_precision": [
+            0.8888888955116272,
+            0.8500000238418579
+        ],
+        "val_recall": [
+            0.761904776096344,
+            0.8095238208770752
+        ]
+    },
+    "val_metrics": {
+        "loss": 0.5693478584289551,
+        "accuracy": 0.8771929740905762,
+        "precision": 0.8500000238418579,
+        "recall": 0.8095238208770752,
+        "f1_score": 0.8292683049893318
+    }
+}

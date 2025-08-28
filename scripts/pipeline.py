@@ -1,30 +1,35 @@
-
-from src.training.trainer import ModelTrainer
-from src.common.callbacks import get_callbacks
-from src.models.baseline import build_compile_baseline
-from src.models.model_dropout import build_compile_dropout
-from src.models.model_no_dropout import build_compile_no_dropout
 import argparse
 from datetime import datetime
-from src.data.preprocessor import BreastCancerPreprocessor
-from src.data.preprocessor_with_normalization import BreastCancerPreprocessorNormalized
-from src.models.model_dropout import build_model_with_dropout_tuner
-from src.models.model_no_dropout import build_model_no_dropout_tuner
-from src.models.baseline import baseline_with_tuner
-from src.tuning.tuner import ModelTuner
-from src.config.constants import BREAST_CANCER_CSV_RAW
-from src.evaluation.evaluator import evaluate
-from src.evaluation.utils import save_evaluation_metrics
-from src.experiments.manager import get_last_experiment
-from src.tuning.workflow import get_best_model
-from src.tuning.utils import save_logs
-from src.experiments.models import save_best_model
-from src.training.experiment_runner import run_experiment
-from src.models.factory import get_model_fns
+
+# Constants
+from src.config.constants import BREAST_CANCER_CSV_RAW, SAVED_MODELS_DIR
+
+# Callbacks
+from src.common.callbacks import get_callbacks
+
+# Data
 from src.data.utils import get_preprocessors
 
-# path where all experiments are stored
-from src.config.constants import SAVED_MODELS_DIR
+# Models
+from src.models.factory import get_model_fns, get_model_fns_tuner
+
+# Training
+from src.training.experiment_runner import run_experiment
+from src.training.utils import get_top_n_models
+
+# Experiments
+from src.experiments.manager import get_last_experiment
+from src.experiments.models import save_best_model
+
+# Tuning
+from src.tuning.utils import save_logs
+from src.tuning.workflow import get_best_model
+
+# Evaluation
+from src.evaluation.evaluator import evaluate
+from src.evaluation.utils import save_evaluation_metrics
+
+
 
 
 
@@ -34,26 +39,26 @@ def main():
     
     # Simple setup
     models_to_train = ["baseline", "no_dropout", "dropout"]
+    data_variants = ["simple", "standardize"]
     batch_size = 32 # maybe then change to args
     dropout_rate = 0.1
     epochs = 2
+    recall_threshold = 0.8
+    top_n = 3
 
 
 
-    # --------------- Data Loading and Preprocessing--------------------
+    # --------------- Data Path and Preprocessors--------------------------
+    
+    # Path to raw data
     filepath = BREAST_CANCER_CSV_RAW
-    preprocessor = BreastCancerPreprocessorNormalized(batch_size=batch_size)
-    train_ds, val_ds = preprocessor.get_datasets(filepath)
-    # quizás luego no xq lo saco de prepreocessors
 
+    # preprocessors
+    preprocessors = get_preprocessors(data_variants, batch_size)
 
 
     # ----------------------- Training ---------------------------------
-
-    # preprocessors
-    data_variants = ["simple", "standardize"] # maybe only standrazie later
-    preprocessors = get_preprocessors(data_variants, batch_size)
-    
+  
     # Model function mapping
     model_fns = get_model_fns(dropout_rate)
 
@@ -64,7 +69,7 @@ def main():
     )
 
     # run experiments
-    experiments = run_experiment(model_fns,
+    results = run_experiment(model_fns,
                              preprocessors, filepath,
                              epochs=epochs, callbacks=callbacks,
                              batch_size=batch_size,
@@ -74,30 +79,36 @@ def main():
     
 
     #---------------Select 3 best models for hyperparameter tuning (models to tune)------------------
-    # best f1 given the ones that passed recall test
-
-    # to try hardcoded first
-    models_to_tune = []
-    models_to_tune.append(("baseline", baseline_with_tuner))
-    models_to_tune.append(("dropout", build_model_with_dropout_tuner))
+    
+    # select best experiments
+    top_models = get_top_n_models(results, recall_threshold=recall_threshold, top_n=top_n)
 
 
+    # allowed comibations to tune (only the best ones)
+    allowed_combinations = []
+    for m in top_models:
+        allowed_combinations.append((m['model_name'], m['data_variant']))
 
     #---------------------------------Hyperparameter tuning-------------------------------------------
-    
-    # get best model (this is the fn. that tunes the model)
-    max_trials = 1
-    epochs = 5
-    results, best_model_info, recall, best_f1 = get_best_model(train_ds, val_ds, max_trials, epochs, models_to_tune)
 
     # timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # Models (with tunen)
+    model_fns = get_model_fns_tuner()
 
-    # Save all results into a single JSON
-    save_logs(results, timestamp) # change location later!!!!
+    # get best (model + prep)
+    results, best_model_info, preprocessor, recall, best_f1 = get_best_model(preprocessors, model_fns, filepath, 
+                                                        max_trials=1, epochs=epochs, recall_threshold=recall_threshold,
+                                                        allowed_combinations=allowed_combinations)
+
 
     # Save the best model automatically
-    save_best_model(best_model_info, timestamp, recall, best_f1, preprocessor) # change location later!!!!!!!
+    save_best_model(best_model_info, timestamp, recall, best_f1, preprocessor)
+
+    # Save all results into a single JSON
+    save_logs(results, timestamp)
+
 
 
     #.......................Evaluate last experminet...........................................

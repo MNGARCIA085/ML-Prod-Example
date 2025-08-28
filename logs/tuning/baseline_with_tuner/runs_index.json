@@ -1,0 +1,44 @@
+[
+    {
+        "timestamp": "20250828_164913",
+        "log_file": "logs/tuning/baseline_with_tuner/baseline_with_tuner_tuner_20250828_164913.log",
+        "json_file": "logs/tuning/baseline_with_tuner/baseline_with_tuner_tuner_20250828_164913.json",
+        "summary": {
+            "val_metrics": {
+                "loss": 0.5693478584289551,
+                "accuracy": 0.8771929740905762,
+                "precision": 0.8500000238418579,
+                "recall": 0.8095238208770752,
+                "f1_score": 0.8292683049893318
+            },
+            "best_hyperparameters": {
+                "learning_rate": 0.00544853401907757,
+                "trained_epochs": 2,
+                "batch_size": 32,
+                "optimizer": "Adam",
+                "final_learning_rate": 0.005448534153401852
+            }
+        }
+    },
+    {
+        "timestamp": "20250828_164923",
+        "log_file": "logs/tuning/baseline_with_tuner/baseline_with_tuner_tuner_20250828_164923.log",
+        "json_file": "logs/tuning/baseline_with_tuner/baseline_with_tuner_tuner_20250828_164923.json",
+        "summary": {
+            "val_metrics": {
+                "loss": 0.08926113694906235,
+                "accuracy": 0.9649122953414917,
+                "precision": 0.9523809552192688,
+                "recall": 0.9523809552192688,
+                "f1_score": 0.9523809502192688
+            },
+            "best_hyperparameters": {
+                "learning_rate": 0.00544853401907757,
+                "trained_epochs": 2,
+                "batch_size": 32,
+                "optimizer": "Adam",
+                "final_learning_rate": 0.005448534153401852
+            }
+        }
+    }
+]

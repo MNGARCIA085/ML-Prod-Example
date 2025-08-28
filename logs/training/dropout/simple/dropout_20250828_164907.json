@@ -1,0 +1,53 @@
+{
+    "model_name": "dropout",
+    "data_variant": "simple",
+    "timestamp": "20250828_164907",
+    "hyperparameters": {
+        "batch_size": 32,
+        "dropout_rate": 0.1,
+        "optimizer": "adam",
+        "learning_rate": 0.10000000149011612,
+        "epochs": 2
+    },
+    "val_metrics": {
+        "loss": 0.6582686901092529,
+        "accuracy": 0.6315789222717285,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+    },
+    "history": {
+        "accuracy": [
+            0.46484375,
+            0.626953125
+        ],
+        "loss": [
+            31.732633590698242,
+            0.6705331802368164
+        ],
+        "precision": [
+            0.3665594756603241,
+            0.0
+        ],
+        "recall": [
+            0.5968586206436157,
+            0.0
+        ],
+        "val_accuracy": [
+            0.6315789222717285,
+            0.6315789222717285
+        ],
+        "val_loss": [
+            0.6582686901092529,
+            0.6737220883369446
+        ],
+        "val_precision": [
+            0.0,
+            0.0
+        ],
+        "val_recall": [
+            0.0,
+            0.0
+        ]
+    }
+}

@@ -1,18 +1,11 @@
 
 import argparse
-from src.data.preprocessor import BreastCancerPreprocessor
-from src.data.preprocessor_with_normalization import BreastCancerPreprocessorNormalized
-from src.training.trainer import ModelTrainer
-from src.models.baseline import build_compile_baseline
-from src.models.model_dropout import build_compile_dropout
-from src.models.model_no_dropout import build_compile_no_dropout
 from src.common.callbacks import get_callbacks
 from src.config.constants import BREAST_CANCER_CSV_RAW
 from src.training.experiment_runner import run_experiment
 from src.models.factory import get_model_fns
 from src.data.utils import get_preprocessors
-
-
+from src.training.utils import get_top_n_models
 
 
 
@@ -55,23 +48,33 @@ def main():
 
 
     # run experiments
-    experiments = run_experiment(model_fns,
+    results = run_experiment(model_fns,
                              preprocessors, filepath,
                              epochs=args.epochs, callbacks=callbacks,
                              batch_size=args.batch_size,
                              dropout_rate=args.dropout_rate)
 
-    
-    # Pick top 2 by validation F1
-    top_models = sorted(experiments, key=lambda x: x["val_f1"], reverse=True)[:2]
 
-    print("\nTop models:")
-    for best in top_models:
-        print(f"{best['model_name']} ({best['data_variant']}): F1={best['val_f1']:.4f}")
+    # select best experiments
+    top_models = get_top_n_models(results, recall_threshold=0.8, top_n=2)
+
+
+    print(top_models)
+
+    for m in top_models:
+        print(f"{m['model_name']} ({m['data_variant']}): recall={m['val_recall']:.3f}, f1={m['val_f1']:.3f}")
+
+
 
 
 if __name__ == '__main__':
     main()
+
+
+
+
+
+
 
 
 

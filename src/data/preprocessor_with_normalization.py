@@ -50,7 +50,7 @@ class BreastCancerPreprocessorNormalized(BasePreprocessor):
             index=X_train.index
         )
 
-        # Apply the scaler to val and test
+        # Apply the scaler to val set
         X_val_scaled = pd.DataFrame(
             self.scaler.transform(X_val),
             columns=X_val.columns,

@@ -5,4 +5,5 @@ def compile_model(model, learning_rate=1e-1): # not better lr to start to show m
         optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
         loss='binary_crossentropy',
         metrics=['accuracy', 'precision', 'recall']
+        #metrics=['accuracy', tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]
     )

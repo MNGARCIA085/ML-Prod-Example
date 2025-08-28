@@ -6,7 +6,7 @@ from src.models.utils import compile_model
 # simple baseline model
 def build_baseline():
     model = Sequential([
-        Dense(8, activation='relu'),
+        Dense(10, activation='relu'),
         Dense(1, activation='sigmoid')
     ],name='baseline')
     return model

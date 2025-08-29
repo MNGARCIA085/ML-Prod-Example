@@ -6,7 +6,9 @@ from src.experiments.manager import get_last_experiment
 
 
 # path where all experiments are stored
-BASE_DIR = "/home/marcos/Escritorio/AI-prod/ML-Prod-Example/outputs/saved_models"
+#BASE_DIR = "/home/marcos/Escritorio/AI-prod/ML-Prod-Example/outputs/saved_models"
+BASE_DIR = "outputs/saved_models"
+
 
 
 # parse arguments

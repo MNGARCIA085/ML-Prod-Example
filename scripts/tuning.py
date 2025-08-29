@@ -53,7 +53,7 @@ def main():
     
     # get best (model + prep)
     results, best_model_info, preprocessor, recall, best_f1 = get_best_model(preprocessors, model_fns, filepath, max_trials=1, 
-                                                               epochs=args.epochs, recall_threshold=0.2)
+                                                               epochs=args.epochs, recall_threshold=0.8)
 
 
     # Save the best model automatically

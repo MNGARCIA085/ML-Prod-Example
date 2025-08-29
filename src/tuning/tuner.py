@@ -35,9 +35,10 @@ class ModelTuner:
             f.write(msg + "\n")
         print(msg)
 
-    def save_logs(self, model_name, best_hp, extra_hyperparams, history, val_metrics, elapsed_time=None):
+    def save_logs(self, model_name, data_variant, best_hp, extra_hyperparams, history, val_metrics, elapsed_time=None):
         results = {
             "model_name": model_name,
+            "data_variant":data_variant,
             "timestamp": self.timestamp,
             "elapsed_time_sec": elapsed_time,
             "best_hyperparameters": {**best_hp.values, **extra_hyperparams},
@@ -63,9 +64,9 @@ class ModelTuner:
             "timestamp": self.timestamp,
             "log_file": self.log_file,
             "json_file": self.json_file,
-            "summary": {
-                k: results.get(k) for k in ["val_metrics", "best_hyperparameters"]
-            }
+            #"summary": {
+            #    k: results.get(k) for k in ["val_metrics", "best_hyperparameters"]
+            #}
         })
 
         with open(self.index_file, "w") as f:
@@ -76,7 +77,7 @@ class ModelTuner:
 
 
 
-    def run(self, train_ds, val_ds, max_trials=2, executions_per_trial=1,
+    def run(self, data_variant, train_ds, val_ds, max_trials=2, executions_per_trial=1,
             epochs=2, patience=5, seed=42):
         
         # seed
@@ -104,8 +105,7 @@ class ModelTuner:
 
 
         self.log("Starting tuner search...")
-        tuner.search(train_ds, validation_data=val_ds, epochs=epochs,
-                     callbacks=[early_stopping_cb, metrics_logger_cb])
+        tuner.search(train_ds, validation_data=val_ds, epochs=epochs, callbacks=[early_stopping_cb, metrics_logger_cb])
         self.log("Tuner search finished.")
 
         
@@ -142,7 +142,7 @@ class ModelTuner:
             "trained_epochs": trained_epochs,
             "batch_size": batch_size,
             "optimizer": optimizer,
-            "final_learning_rate": learning_rate,
+            "final_learning_rate": learning_rate, # useful if I use lr scheduling
         }
 
         
@@ -151,6 +151,7 @@ class ModelTuner:
 
         self.save_logs(
             model_name=self.build_model_fn.__name__,
+            data_variant=data_variant,
             best_hp=best_hp,
             extra_hyperparams=extra_hyperparams,
             history=history_cb.history,

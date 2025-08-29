@@ -43,6 +43,7 @@ def tune_combinations(
             # Run the tuner
             tuner = ModelTuner(build_model_fn=build_fn)
             best_model, best_hp, val_metrics = tuner.run(
+                data_variant,
                 train_ds,
                 val_ds,
                 max_trials=max_trials,

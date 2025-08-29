@@ -4,7 +4,7 @@ from src.models.utils import compile_model
 
 
 # build model
-def build_model_with_dropout(dropout_rate=0.1): # quitar default
+def build_model_with_dropout(dropout_rate=0.1):
     model = Sequential([
         #Input(shape=(None,)),  # None means "any number of features"
         Dense(16, activation='relu'),

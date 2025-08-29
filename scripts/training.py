@@ -23,9 +23,9 @@ def main():
                         help="Data variants to use (default: all)")
 
     # hyperparams
-    parser.add_argument("--batch_size", type=int, default=64, help="Batch size for training (default: 64)")
-    parser.add_argument("--epochs", type=int, default=10, help="Epochs (default: 2)")
-    parser.add_argument("--dropout_rate", type=float, default=0.2, help="Dropout rate (default: 0.2)")
+    parser.add_argument("--batch_size", type=int, default=32, help="Batch size for training (default: 32)")
+    parser.add_argument("--epochs", type=int, default=10, help="Epochs (default: 10)")
+    parser.add_argument("--dropout_rate", type=float, default=0.1, help="Dropout rate (default: 0.1)")
     
 
     args = parser.parse_args()
@@ -42,7 +42,7 @@ def main():
 
     # callbacks
     callbacks = get_callbacks(
-        use_early_stopping=True, 
+        use_early_stopping=False, 
         use_reduce_lr=False
     )
 
@@ -58,9 +58,7 @@ def main():
     # select best experiments
     top_models = get_top_n_models(results, recall_threshold=0.8, top_n=2)
 
-
-    print(top_models)
-
+    # print top models
     for m in top_models:
         print(f"{m['model_name']} ({m['data_variant']}): recall={m['val_recall']:.3f}, f1={m['val_f1']:.3f}")
 
@@ -71,22 +69,11 @@ if __name__ == '__main__':
     main()
 
 
-
-
-
-
-
-
-
-
-
-
 """
+python -m scripts.training --epochs 20 --batch_size 64
+
 python train.py --models baseline dropout --data_variants simple standardize
 python train.py  # trains all models with all data variants
 python train.py --batch_size 128 --dropout_rate 0.3
-
-
-python -m scripts.training
 
 """

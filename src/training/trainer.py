@@ -1,6 +1,5 @@
-from .utils import make_run_dirs
+from src.utils.io import make_run_dirs, log_message
 from .utils import extract_optimizer_info
-from .utils import log_message
 import json
 import os
 

@@ -3,8 +3,8 @@ import pytest
 import tensorflow as tf
 import pandas as pd
 from src.data.base_preprocessor import BasePreprocessor
-from src.data.preprocessor import BreastCancerPreprocessor
-from src.data.preprocessor_with_normalization import BreastCancerPreprocessorNormalized
+from src.data.preprocessor_simple import BreastCancerPreprocessor
+from src.data.preprocessor_standardize import BreastCancerPreprocessorNormalized
 
 
 # -----------------------------

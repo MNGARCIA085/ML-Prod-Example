@@ -24,7 +24,7 @@ def main():
 
     # hyperparams
     parser.add_argument("--batch_size", type=int, default=64, help="Batch size for training (default: 64)")
-    parser.add_argument("--epochs", type=int, default=2, help="Epochs (default: 2)")
+    parser.add_argument("--epochs", type=int, default=10, help="Epochs (default: 2)")
     parser.add_argument("--dropout_rate", type=float, default=0.2, help="Dropout rate (default: 0.2)")
     
 

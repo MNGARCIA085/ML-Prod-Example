@@ -1,5 +1,5 @@
-from .preprocessor import BreastCancerPreprocessor
-from .preprocessor_with_normalization import BreastCancerPreprocessorNormalized
+from .preprocessor_simple import BreastCancerPreprocessor
+from .preprocessor_standardize import BreastCancerPreprocessorNormalized
 
 
 

@@ -27,7 +27,7 @@ def main():
     )
 
     parser.add_argument("--batch_size", type=int, default=64, help="Batch size for preprocessing (default: 64)")
-    parser.add_argument("--epochs", type=int, default=2, help="Number of epochs for tuning (default: 2)")
+    parser.add_argument("--epochs", type=int, default=10, help="Number of epochs for tuning (default: 2)")
     parser.add_argument("--max_trials", type=int, default=1, help="Max tuning trials (default: 1)")
 
     args = parser.parse_args()

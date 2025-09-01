@@ -2,7 +2,7 @@ from src.utils.io import make_run_dirs, log_message
 from .utils import extract_optimizer_info
 import json
 import os
-
+from src.utils.io import save_training_logs
 
 
 class ModelTrainer:
@@ -51,9 +51,30 @@ class ModelTrainer:
         self.val_loss, self.val_acc, self.val_precision, self.val_recall = self.model.evaluate(self.val_ds)
         self.val_f1 = 2 * (self.val_precision * self.val_recall) / (self.val_precision + self.val_recall + 1e-8)
 
+        # Val metrics
+        val_metrics = {
+            "loss": self.val_loss,
+            "accuracy": self.val_acc,
+            "precision": self.val_precision,
+            "recall": self.val_recall,
+            "f1": self.val_f1
+       }
+
         # save logs
-        self.save_logs()
-        
+        save_training_logs(
+            model_name=self.model_name,
+            data_variant=self.data_variant,
+            timestamp=self.timestamp,
+            json_file=self.json_file,
+            runs_index_file=self.runs_index_file,
+            log_file=self.log_file,
+            log_fn=self.log,
+            hyperparameters=self.hyperparameters,
+            history=self.history,
+            val_metrics=val_metrics
+        )
+
+
         # return
         return {
             "model": self.model,
@@ -69,35 +90,3 @@ class ModelTrainer:
         }
 
 
-    def save_logs(self):
-        results = {
-            "model_name": self.model_name,
-            "data_variant": self.data_variant,
-            "timestamp": self.timestamp,
-            "hyperparameters": self.hyperparameters,
-            "val_metrics":
-                {
-                    "loss": self.val_loss,
-                    "accuracy": self.val_acc,
-                    "precision": self.val_precision,
-                    "recall": self.val_recall,
-                    "f1": self.val_f1
-                },
-            "history": {k: list(map(float, v)) for k, v in self.history.history.items()}
-        }
-
-        with open(self.json_file, "w") as f:
-            json.dump(results, f, indent=4)
-
-        # Update runs index
-        runs_index = []
-        if os.path.exists(self.runs_index_file):
-            with open(self.runs_index_file, "r") as f:
-                runs_index = json.load(f)
-        runs_index.append({"timestamp": self.timestamp, "json_file": os.path.basename(self.json_file)})
-        with open(self.runs_index_file, "w") as f:
-            json.dump(runs_index, f, indent=4)
-
-        self.log(f"Logs saved to {self.log_file}")
-        self.log(f"JSON saved to {self.json_file}")
-        self.log(f"Run index updated: {self.runs_index_file}")

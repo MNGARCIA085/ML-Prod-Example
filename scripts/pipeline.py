@@ -42,7 +42,7 @@ def main():
     data_variants = ["simple", "standardize"]
     batch_size = 64
     dropout_rate = 0.1
-    epochs = 20
+    epochs = 20 #20
     recall_threshold = 0.8
     top_n = 3
 

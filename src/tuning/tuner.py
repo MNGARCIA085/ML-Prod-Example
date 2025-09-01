@@ -7,12 +7,13 @@ import kerastuner as kt
 from datetime import datetime
 import time
 from .utils import MetricsLogger,HistoryCapture,compute_f1,set_seed
-
+from src.utils.io import save_tuning_logs, log_message
 
 
 
 # Model Tuner
 class ModelTuner:
+    # constructor
     def __init__(self, build_model_fn, log_dir="logs/tuning"):
         self.build_model_fn = build_model_fn
 
@@ -30,65 +31,80 @@ class ModelTuner:
             with open(self.index_file, "w") as f:
                 json.dump([], f, indent=4)
 
-    def log(self, msg):
-        with open(self.log_file, "a") as f:
-            f.write(msg + "\n")
-        print(msg)
-
-    def save_logs(self, model_name, data_variant, best_hp, extra_hyperparams, history, val_metrics, elapsed_time=None):
-        results = {
-            "model_name": model_name,
-            "data_variant":data_variant,
-            "timestamp": self.timestamp,
-            "elapsed_time_sec": elapsed_time,
-            "best_hyperparameters": {**best_hp.values, **extra_hyperparams},
-            "environment": {
-                "python_version": platform.python_version(),
-                "tensorflow_version": tf.__version__,
-                "keras_version": tf.keras.__version__,
-                "os": platform.platform(),
-            },
-            "history": history,
-            "val_metrics": val_metrics,
-        }
-
-        # Save JSON log
-        with open(self.json_file, "w") as f:
-            json.dump(results, f, indent=4)
-
-        # Update central index
-        with open(self.index_file, "r") as f:
-            runs = json.load(f)
-
-        runs.append({
-            "timestamp": self.timestamp,
-            "log_file": self.log_file,
-            "json_file": self.json_file,
-            #"summary": {
-            #    k: results.get(k) for k in ["val_metrics", "best_hyperparameters"]
-            #}
-        })
-
-        with open(self.index_file, "w") as f:
-            json.dump(runs, f, indent=4)
-
-        self.log(f"Logs saved to {self.log_file}")
-        self.log(f"JSON metrics saved to {self.json_file}")
 
 
+    # run
+    def run(self, data_variant, train_ds, val_ds, max_trials=2,
+        executions_per_trial=1, epochs=2, patience=5, seed=42):
 
-    def run(self, data_variant, train_ds, val_ds, max_trials=2, executions_per_trial=1,
-            epochs=2, patience=5, seed=42):
-        
-        # seed
         set_seed(seed)
-
-        # start
-        self.log(f"=== Starting tuner for {self.build_model_fn.__name__} ===")
+        #self.log(f"=== Starting tuner for {self.build_model_fn.__name__} ===")
+        # instead of self.log(msg):
+        log_message(f"=== Starting tuner for {self.build_model_fn.__name__} ===", self.log_file)
         start_time = time.time()
 
-        # tuning
-        tuner = kt.RandomSearch(
+        tuner = self._create_tuner(max_trials, executions_per_trial)
+
+        early_stopping_cb = tf.keras.callbacks.EarlyStopping(
+            monitor="val_loss", patience=patience, restore_best_weights=True
+        )
+        
+
+        #metrics_logger_cb = MetricsLogger(self.log)
+        metrics_logger_cb = MetricsLogger(lambda msg: log_message(msg, log_file=self.log_file))
+
+
+        #self.log("Starting tuner search...")
+        tuner.search(train_ds, validation_data=val_ds,
+                     epochs=epochs, callbacks=[early_stopping_cb, metrics_logger_cb])
+        #self.log("Tuner search finished.")
+
+        # Best model + hyperparameters
+        best_model = tuner.get_best_models(num_models=1)[0]
+        best_hp = tuner.get_best_hyperparameters(num_trials=1)[0]
+        self.metric_names = best_model.metrics_names
+        #self.log(f"Best hyperparameters: {best_hp.values}")
+
+        # Retrain
+        history, trained_epochs = self._train_best_model(
+            best_model, train_ds, val_ds, epochs, early_stopping_cb, metrics_logger_cb
+        )
+
+        # Evaluate
+        val_metrics_dict = self._evaluate_model(best_model, val_ds)
+
+        # Collect extra hyperparameters
+        extra_hyperparams = self._collect_extra_hyperparams(best_model, train_ds, trained_epochs)
+
+        elapsed_time = time.time() - start_time
+
+        # Save logs
+        save_tuning_logs(
+            model_name=self.build_model_fn.__name__,
+            data_variant=data_variant,
+            timestamp=self.timestamp,
+            json_file=self.json_file,
+            index_file=self.index_file,
+            log_file=self.log_file,
+            log_fn=lambda msg: log_message(msg, log_file=self.log_file),   # still reuses your small log wrapper
+            best_hp=best_hp,
+            extra_hyperparams=extra_hyperparams,
+            history=history,
+            val_metrics=val_metrics_dict,
+            elapsed_time=elapsed_time,
+        )
+
+
+        #self.log(f"=== End of tuner for {self.build_model_fn.__name__} ===")
+
+        # return
+        return best_model, best_hp, val_metrics_dict
+
+
+    # ---------------- HELPER METHODS ----------------
+
+    def _create_tuner(self, max_trials, executions_per_trial):
+        return kt.RandomSearch(
             lambda hp: self.build_model_fn(hp),
             objective="val_accuracy",
             max_trials=max_trials,
@@ -98,69 +114,46 @@ class ModelTuner:
             overwrite=True
         )
 
-        early_stopping_cb = tf.keras.callbacks.EarlyStopping(
-            monitor="val_loss", patience=patience, restore_best_weights=True
-        )
-        metrics_logger_cb = MetricsLogger(self.log)
-
-
-        self.log("Starting tuner search...")
-        tuner.search(train_ds, validation_data=val_ds, epochs=epochs, callbacks=[early_stopping_cb, metrics_logger_cb])
-        self.log("Tuner search finished.")
-
-        
-        # get best model
-        best_model = tuner.get_best_models(num_models=1)[0]
-        best_hp = tuner.get_best_hyperparameters(num_trials=1)[0]
-        self.metric_names = best_model.metrics_names
-        self.log(f"Best hyperparameters: {best_hp.values}")
-
-
-        # retrain best model for full history
+    def _train_best_model(self, model, train_ds, val_ds, epochs, *callbacks):
         history_cb = HistoryCapture()
-        best_model.fit(train_ds, validation_data=val_ds, epochs=epochs,
-                       callbacks=[early_stopping_cb, metrics_logger_cb, history_cb], verbose=0)
-        
+        model.fit(
+            train_ds,
+            validation_data=val_ds,
+            epochs=epochs,
+            callbacks=[*callbacks, history_cb],
+            verbose=0
+        )
+        trained_epochs = len(history_cb.history.get("loss", []))
+        return history_cb.history, trained_epochs
 
-        val_metrics = best_model.evaluate(val_ds, verbose=0)
-        val_metrics_dict = {
-                "loss": val_metrics[0],
-                "accuracy": val_metrics[1],
-                "precision": val_metrics[2],
-                "recall": val_metrics[3],
-                "f1_score": compute_f1(val_metrics[2], val_metrics[3])
+    def _evaluate_model(self, model, val_ds):
+        val_metrics = model.evaluate(val_ds, verbose=0)
+        return {
+            "loss": val_metrics[0],
+            "accuracy": val_metrics[1],
+            "precision": val_metrics[2],
+            "recall": val_metrics[3],
+            "f1_score": compute_f1(val_metrics[2], val_metrics[3])
         }
 
-        # extra hyperparameters
-        trained_epochs = len(history_cb.history["loss"])
+    def _collect_extra_hyperparams(self, model, train_ds, trained_epochs):
         batch_size_tensor = getattr(train_ds, "_batch_size", None)
         batch_size = int(batch_size_tensor.numpy()) if batch_size_tensor is not None else "unknown"
-        optimizer = type(best_model.optimizer).__name__
-        learning_rate = float(tf.keras.backend.get_value(best_model.optimizer.learning_rate))
+        optimizer = type(model.optimizer).__name__
+        learning_rate = float(tf.keras.backend.get_value(model.optimizer.learning_rate))
 
-        extra_hyperparams = {
+        return {
             "trained_epochs": trained_epochs,
             "batch_size": batch_size,
             "optimizer": optimizer,
-            "final_learning_rate": learning_rate, # useful if I use lr scheduling
+            "final_learning_rate": learning_rate,
         }
 
-        
-        # elapsed time
-        elapsed_time = time.time() - start_time
 
-        self.save_logs(
-            model_name=self.build_model_fn.__name__,
-            data_variant=data_variant,
-            best_hp=best_hp,
-            extra_hyperparams=extra_hyperparams,
-            history=history_cb.history,
-            val_metrics=val_metrics_dict,
-            elapsed_time=elapsed_time
-        )
 
-        self.log(f"=== End of tuner for {self.build_model_fn.__name__} ===")
-        return best_model, best_hp, val_metrics_dict
+
+
+
 
 
 

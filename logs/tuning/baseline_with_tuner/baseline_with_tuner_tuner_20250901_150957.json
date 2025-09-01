@@ -1,8 +1,8 @@
 {
     "model_name": "baseline_with_tuner",
     "data_variant": "standardize",
-    "timestamp": "20250829_201904",
-    "elapsed_time_sec": 4.236615896224976,
+    "timestamp": "20250901_150957",
+    "elapsed_time_sec": 3.80279278755188,
     "best_hyperparameters": {
         "learning_rate": 0.00544853401907757,
         "trained_epochs": 9,

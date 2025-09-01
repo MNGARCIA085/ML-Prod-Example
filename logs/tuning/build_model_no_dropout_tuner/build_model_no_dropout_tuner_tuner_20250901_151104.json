@@ -1,8 +1,8 @@
 {
     "model_name": "build_model_no_dropout_tuner",
     "data_variant": "standardize",
-    "timestamp": "20250829_201915",
-    "elapsed_time_sec": 5.61074686050415,
+    "timestamp": "20250901_151104",
+    "elapsed_time_sec": 4.052277565002441,
     "best_hyperparameters": {
         "learning_rate": 0.00544853401907757,
         "trained_epochs": 16,

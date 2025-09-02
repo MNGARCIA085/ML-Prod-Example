@@ -3,7 +3,7 @@ from datetime import datetime
 from src.config.constants import BREAST_CANCER_CSV_RAW
 from src.tuning.workflow import get_best_model
 from src.experiments.models import save_best_model
-from src.tuning.utils import save_logs
+from src.utils.io import save_tuning_all
 from src.data.utils import get_preprocessors
 from src.models.factory import get_model_fns_tuner
 
@@ -60,7 +60,7 @@ def main():
     save_best_model(best_model_info, timestamp, recall, best_f1, preprocessor)
 
     # Save all results into a single JSON
-    save_logs(results, timestamp)
+    save_tuning_all(results, timestamp)
 
     # return
     return best_model_info

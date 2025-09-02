@@ -124,4 +124,12 @@ def save_tuning_logs(
 
 
 
+# save results for tuning
+def save_tuning_all(results, timestamp):
+    os.makedirs("logs/tuning", exist_ok=True)
+    json_file = f"logs/tuning/all_models_results_{timestamp}.json"
+    with open(json_file, "w") as f:
+        json.dump(results, f, indent=4)
+    print(f"All models results saved to {json_file}")
+
 

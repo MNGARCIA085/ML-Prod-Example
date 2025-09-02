@@ -1,12 +1,12 @@
 [
     {
-        "timestamp": "20250901_210204",
-        "log_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250901_210204.log",
-        "json_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250901_210204.json"
+        "timestamp": "20250902_153344",
+        "log_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250902_153344.log",
+        "json_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250902_153344.json"
     },
     {
-        "timestamp": "20250901_210217",
-        "log_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250901_210217.log",
-        "json_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250901_210217.json"
+        "timestamp": "20250902_153357",
+        "log_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250902_153357.log",
+        "json_file": "logs/tuning/build_model_with_dropout_tuner/build_model_with_dropout_tuner_tuner_20250902_153357.json"
     }
 ]

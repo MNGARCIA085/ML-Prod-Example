@@ -6,8 +6,10 @@ import tensorflow as tf
 import kerastuner as kt
 from datetime import datetime
 import time
-from .utils import MetricsLogger,HistoryCapture,compute_f1,set_seed
+from src.common.callbacks import MetricsLogger,HistoryCapture
+from src.common.utils import set_seed
 from src.utils.io import save_tuning_logs, log_message
+from src.common.metrics import compute_f1
 
 
 

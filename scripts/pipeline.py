@@ -22,7 +22,7 @@ from src.experiments.manager import get_last_experiment
 from src.experiments.models import save_best_model
 
 # Tuning
-from src.tuning.utils import save_logs
+from src.utils.io import save_tuning_all
 from src.tuning.workflow import get_best_model
 
 # Evaluation
@@ -42,7 +42,7 @@ def main():
     data_variants = ["simple", "standardize"]
     batch_size = 64
     dropout_rate = 0.1
-    epochs = 20 #20
+    epochs = 20
     recall_threshold = 0.8
     top_n = 3
 
@@ -107,7 +107,7 @@ def main():
     save_best_model(best_model_info, timestamp, recall, best_f1, preprocessor)
 
     # Save all results into a single JSON
-    save_logs(results, timestamp)
+    save_tuning_all(results, timestamp)
 
 
 

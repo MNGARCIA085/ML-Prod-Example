@@ -2,7 +2,8 @@ from src.utils.io import make_run_dirs, log_message
 from .utils import extract_optimizer_info
 import json
 import os
-from src.utils.io import save_training_logs
+from src.utils.io import save_training_logs, log_message
+from src.common.metrics import compute_f1
 
 
 class ModelTrainer:
@@ -23,13 +24,11 @@ class ModelTrainer:
             log_dir, model_name, data_variant
         )
 
-    def log(self, msg):
-        log_message(msg, self.log_file)
-
 
     # TRAINING
     def train(self):
-        self.log(f"=== Training: {self.model_name} ({self.data_variant}) ===")
+        #self.log(f"=== Training: {self.model_name} ({self.data_variant}) ===")
+        log_message(f"=== Training: {self.model_name} ({self.data_variant}) ===", self.log_file)
         
         # Instanciate model
         self.model = self.model_fn()
@@ -52,7 +51,7 @@ class ModelTrainer:
             json_file=self.json_file,
             runs_index_file=self.runs_index_file,
             log_file=self.log_file,
-            log_fn=self.log,
+            log_fn=lambda msg: log_message(msg, log_file=self.log_file),
             hyperparameters=self.hyperparameters,
             history=history,
             val_metrics=val_metrics
@@ -97,7 +96,7 @@ class ModelTrainer:
             "accuracy": val_metrics.get("accuracy"),
             "precision": precision,
             "recall": recall,
-            "f1": 2 * (precision * recall) / (precision + recall + 1e-8),
+            "f1": compute_f1(precision, recall),
         }
 
     def _fill_missing_hyperparameters(self):

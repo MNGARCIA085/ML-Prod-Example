@@ -35,11 +35,11 @@ class ModelTuner:
 
     # run
     def run(self, data_variant, train_ds, val_ds, max_trials=2,
-        executions_per_trial=1, epochs=2, patience=5, seed=42):
+            executions_per_trial=1, epochs=2, patience=5, seed=42):
 
         set_seed(seed)
-        #self.log(f"=== Starting tuner for {self.build_model_fn.__name__} ===")
-        # instead of self.log(msg):
+
+        # start
         log_message(f"=== Starting tuner for {self.build_model_fn.__name__} ===", self.log_file)
         start_time = time.time()
 
@@ -49,21 +49,20 @@ class ModelTuner:
             monitor="val_loss", patience=patience, restore_best_weights=True
         )
         
-
-        #metrics_logger_cb = MetricsLogger(self.log)
+        # metrics logger
         metrics_logger_cb = MetricsLogger(lambda msg: log_message(msg, log_file=self.log_file))
 
-
-        #self.log("Starting tuner search...")
+        # search
+        log_message(f"Starting tuner search...", self.log_file)
         tuner.search(train_ds, validation_data=val_ds,
                      epochs=epochs, callbacks=[early_stopping_cb, metrics_logger_cb])
-        #self.log("Tuner search finished.")
+        log_message("Tuner search finished.", self.log_file)
 
         # Best model + hyperparameters
         best_model = tuner.get_best_models(num_models=1)[0]
         best_hp = tuner.get_best_hyperparameters(num_trials=1)[0]
         self.metric_names = best_model.metrics_names
-        #self.log(f"Best hyperparameters: {best_hp.values}")
+        log_message(f"Best hyperparameters: {best_hp.values}",self.log_file)
 
         # Retrain
         history, trained_epochs = self._train_best_model(
@@ -94,8 +93,7 @@ class ModelTuner:
             elapsed_time=elapsed_time,
         )
 
-
-        #self.log(f"=== End of tuner for {self.build_model_fn.__name__} ===")
+        log_message(f"=== End of tuner for {self.build_model_fn.__name__} ===",self.log_file)
 
         # return
         return best_model, best_hp, val_metrics_dict
@@ -135,6 +133,9 @@ class ModelTuner:
             "recall": val_metrics[3],
             "f1_score": compute_f1(val_metrics[2], val_metrics[3])
         }
+        """
+        val_metrics_dict = {name: value for name, value in zip(model.metrics_names, val_metrics)}
+        """
 
     def _collect_extra_hyperparams(self, model, train_ds, trained_epochs):
         batch_size_tensor = getattr(train_ds, "_batch_size", None)

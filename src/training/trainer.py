@@ -26,6 +26,8 @@ class ModelTrainer:
     def log(self, msg):
         log_message(msg, self.log_file)
 
+
+    # TRAINING
     def train(self):
         self.log(f"=== Training: {self.model_name} ({self.data_variant}) ===")
         
@@ -33,32 +35,14 @@ class ModelTrainer:
         self.model = self.model_fn()
 
         # Fill missing hyperparameters
-        if "optimizer" not in self.hyperparameters or "learning_rate" not in self.hyperparameters:
-            opt_info = extract_optimizer_info(self.model)
-            self.hyperparameters.setdefault("optimizer", opt_info["optimizer"])
-            self.hyperparameters.setdefault("learning_rate", opt_info["learning_rate"])
-        self.hyperparameters["epochs"] = self.epochs
+        self._fill_missing_hyperparameters()
 
-        # Train with optional callbacks
-        self.history = self.model.fit(
-            self.train_ds,
-            validation_data=self.val_ds,
-            epochs=self.epochs,
-            callbacks=self.callbacks
-        )
+        # Train
+        history = self._train(self.model, self.train_ds, self.val_ds, self.epochs, self.callbacks)
 
         # Evaluate
-        self.val_loss, self.val_acc, self.val_precision, self.val_recall = self.model.evaluate(self.val_ds)
-        self.val_f1 = 2 * (self.val_precision * self.val_recall) / (self.val_precision + self.val_recall + 1e-8)
+        val_metrics = self._evaluate_model(self.model, self.val_ds)
 
-        # Val metrics
-        val_metrics = {
-            "loss": self.val_loss,
-            "accuracy": self.val_acc,
-            "precision": self.val_precision,
-            "recall": self.val_recall,
-            "f1": self.val_f1
-       }
 
         # save logs
         save_training_logs(
@@ -70,7 +54,7 @@ class ModelTrainer:
             log_file=self.log_file,
             log_fn=self.log,
             hyperparameters=self.hyperparameters,
-            history=self.history,
+            history=history,
             val_metrics=val_metrics
         )
 
@@ -78,15 +62,55 @@ class ModelTrainer:
         # return
         return {
             "model": self.model,
-            "history": self.history,
-            "val_loss": self.val_loss,
-            "val_accuracy": self.val_acc,
-            "val_precision": self.val_precision,
-            "val_recall": self.val_recall,
-            "val_f1": self.val_f1,
+            "history": history,
+            "val_loss": val_metrics['loss'],
+            "val_accuracy": val_metrics['accuracy'],
+            "val_precision": val_metrics['precision'],
+            "val_recall": val_metrics['recall'],
+            "val_f1": val_metrics['f1'],
             "hyperparameters": self.hyperparameters,
             "model_name": self.model_name,
             "data_variant": self.data_variant,
         }
+
+
+
+    # ---------------- HELPER METHODS ----------------
+    def _train(self, model, train_ds, val_ds, epochs, callbacks):
+        history = model.fit(
+            train_ds,
+            validation_data=val_ds,
+            epochs=epochs,
+            callbacks=callbacks,
+        )
+        return history
+
+    def _evaluate_model(self, model, val_ds):
+        val_metrics = model.evaluate(val_ds, verbose=0, return_dict=True)
+
+        # Handle possible key name variations
+        precision = val_metrics.get("precision") or val_metrics.get("precision_1") or 0.0
+        recall = val_metrics.get("recall") or val_metrics.get("recall_1") or 0.0
+
+        return {
+            "loss": val_metrics.get("loss"),
+            "accuracy": val_metrics.get("accuracy"),
+            "precision": precision,
+            "recall": recall,
+            "f1": 2 * (precision * recall) / (precision + recall + 1e-8),
+        }
+
+    def _fill_missing_hyperparameters(self):
+        # Extract optimizer info from model if missing
+        if "optimizer" not in self.hyperparameters or "learning_rate" not in self.hyperparameters:
+            opt_info = extract_optimizer_info(self.model)
+            self.hyperparameters.setdefault("optimizer", opt_info["optimizer"])
+            self.hyperparameters.setdefault("learning_rate", opt_info["learning_rate"])
+
+        # Always set epochs
+        self.hyperparameters["epochs"] = self.epochs
+
+
+
 
 

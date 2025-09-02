@@ -1,32 +1,12 @@
 [
     {
-        "timestamp": "20250901_150908",
-        "log_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_150908.log",
-        "json_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_150908.json"
+        "timestamp": "20250901_210209",
+        "log_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_210209.log",
+        "json_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_210209.json"
     },
     {
-        "timestamp": "20250901_150920",
-        "log_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_150920.log",
-        "json_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_150920.json"
-    },
-    {
-        "timestamp": "20250901_150953",
-        "log_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_150953.log",
-        "json_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_150953.json"
-    },
-    {
-        "timestamp": "20250901_151006",
-        "log_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_151006.log",
-        "json_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_151006.json"
-    },
-    {
-        "timestamp": "20250901_151052",
-        "log_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_151052.log",
-        "json_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_151052.json"
-    },
-    {
-        "timestamp": "20250901_151104",
-        "log_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_151104.log",
-        "json_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_151104.json"
+        "timestamp": "20250901_210222",
+        "log_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_210222.log",
+        "json_file": "logs/tuning/build_model_no_dropout_tuner/build_model_no_dropout_tuner_tuner_20250901_210222.json"
     }
 ]

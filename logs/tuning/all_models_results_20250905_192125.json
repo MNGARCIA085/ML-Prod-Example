@@ -1,0 +1,88 @@
+{
+    "baseline_simple": {
+        "best_hyperparameters": {
+            "learning_rate": 0.00544853401907757
+        },
+        "val_metrics": {
+            "loss": 0.42932528257369995,
+            "accuracy": 0.8771929740905762,
+            "precision": 0.9375,
+            "recall": 0.7142857313156128,
+            "f1_score": 0.8108108168739009
+        },
+        "data_variant": "simple",
+        "model_name": "baseline"
+    },
+    "no_dropout_simple": {
+        "best_hyperparameters": {
+            "dropout_rate": 0.4,
+            "learning_rate": 0.0033276572881909957
+        },
+        "val_metrics": {
+            "loss": 0.520491898059845,
+            "accuracy": 0.8421052694320679,
+            "precision": 1.0,
+            "recall": 0.5714285969734192,
+            "f1_score": 0.7272727433338433
+        },
+        "data_variant": "simple",
+        "model_name": "no_dropout"
+    },
+    "dropout_simple": {
+        "best_hyperparameters": {
+            "learning_rate": 0.00544853401907757
+        },
+        "val_metrics": {
+            "loss": 0.5141578316688538,
+            "accuracy": 0.8245614171028137,
+            "precision": 0.739130437374115,
+            "recall": 0.8095238208770752,
+            "f1_score": 0.7727272743261333
+        },
+        "data_variant": "simple",
+        "model_name": "dropout"
+    },
+    "baseline_standardize": {
+        "best_hyperparameters": {
+            "learning_rate": 0.00544853401907757
+        },
+        "val_metrics": {
+            "loss": 0.029860323294997215,
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 0.999999995
+        },
+        "data_variant": "standardize",
+        "model_name": "baseline"
+    },
+    "no_dropout_standardize": {
+        "best_hyperparameters": {
+            "dropout_rate": 0.4,
+            "learning_rate": 0.0033276572881909957
+        },
+        "val_metrics": {
+            "loss": 0.014230280183255672,
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 0.999999995
+        },
+        "data_variant": "standardize",
+        "model_name": "no_dropout"
+    },
+    "dropout_standardize": {
+        "best_hyperparameters": {
+            "learning_rate": 0.00544853401907757
+        },
+        "val_metrics": {
+            "loss": 0.021325992420315742,
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 0.999999995
+        },
+        "data_variant": "standardize",
+        "model_name": "dropout"
+    }
+}

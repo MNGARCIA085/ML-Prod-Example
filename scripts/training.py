@@ -31,7 +31,6 @@ def main():
     args = parser.parse_args()
 
     # Defaults if not provided
-    models_to_train = args.models or ["baseline", "no_dropout", "dropout"]
     data_variants = args.data_variants or ["simple", "standardize"]
 
     # preprocessors

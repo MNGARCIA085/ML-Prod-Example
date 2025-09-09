@@ -19,30 +19,52 @@ python -m venv venv
 ```
 
 ### 2. Activate the environment
+
+#### 2.1. Linux
+```bash
 source venv/bin/activate
+```
+#### 2.2. Windows
+```bash
+venv\Scripts\activate
+```
 
 ### 3. Install requirements
+```bash
 pip install -r requirements.txt
+```
 
 ### 4. Execute scripts
 
 #### 4.1. Preprocessing
+```bash
 python3.10 -m scripts.preprocessing
 python -m scripts.preprocessing --prep_style standardize
+```
 
 #### 4.2. Training
+```bash
 python -m scripts.training 
 python -m scripts.training --epochs 20 --batch_size 64
+```
 
 #### 4.3. Tuning
+```bash
 python -m scripts.tuning
 python -m scripts.tuning --models baseline dropout --data_variants simple
+```
 
 #### 4.4. Evaluation
+```bash
 python -m scripts.evaluate --last
+```
 
 #### 4.5. Pipeline
+```bash
 python -m scripts.pipeline
+```
+
+
 
 
 

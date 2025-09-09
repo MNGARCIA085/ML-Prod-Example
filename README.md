@@ -38,7 +38,7 @@ pip install -r requirements.txt
 
 #### 4.1. Preprocessing
 ```bash
-python3.10 -m scripts.preprocessing
+python -m scripts.preprocessing
 python -m scripts.preprocessing --prep_style standardize
 ```
 

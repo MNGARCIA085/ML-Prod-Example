@@ -4,7 +4,7 @@
             "learning_rate": 0.00544853401907757
         },
         "val_metrics": {
-            "loss": 0.42932528257369995,
+            "loss": 0.3743204176425934,
             "accuracy": 0.8771929740905762,
             "precision": 0.9375,
             "recall": 0.7142857313156128,
@@ -19,11 +19,11 @@
             "learning_rate": 0.0033276572881909957
         },
         "val_metrics": {
-            "loss": 0.520491898059845,
+            "loss": 0.36262816190719604,
             "accuracy": 0.8421052694320679,
-            "precision": 1.0,
-            "recall": 0.5714285969734192,
-            "f1_score": 0.7272727433338433
+            "precision": 0.9285714030265808,
+            "recall": 0.6190476417541504,
+            "f1_score": 0.7428571462314935
         },
         "data_variant": "simple",
         "model_name": "no_dropout"
@@ -33,11 +33,11 @@
             "learning_rate": 0.00544853401907757
         },
         "val_metrics": {
-            "loss": 0.5141578316688538,
-            "accuracy": 0.8245614171028137,
-            "precision": 0.739130437374115,
+            "loss": 0.21404622495174408,
+            "accuracy": 0.9122806787490845,
+            "precision": 0.9444444179534912,
             "recall": 0.8095238208770752,
-            "f1_score": 0.7727272743261333
+            "f1_score": 0.8717948621219211
         },
         "data_variant": "simple",
         "model_name": "dropout"
@@ -47,7 +47,7 @@
             "learning_rate": 0.00544853401907757
         },
         "val_metrics": {
-            "loss": 0.029860323294997215,
+            "loss": 0.037699028849601746,
             "accuracy": 1.0,
             "precision": 1.0,
             "recall": 1.0,
@@ -62,7 +62,7 @@
             "learning_rate": 0.0033276572881909957
         },
         "val_metrics": {
-            "loss": 0.014230280183255672,
+            "loss": 0.010451572015881538,
             "accuracy": 1.0,
             "precision": 1.0,
             "recall": 1.0,
@@ -76,7 +76,7 @@
             "learning_rate": 0.00544853401907757
         },
         "val_metrics": {
-            "loss": 0.021325992420315742,
+            "loss": 0.022183755412697792,
             "accuracy": 1.0,
             "precision": 1.0,
             "recall": 1.0,

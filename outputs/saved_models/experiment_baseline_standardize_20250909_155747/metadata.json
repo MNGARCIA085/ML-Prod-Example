@@ -6,7 +6,7 @@
         "learning_rate": 0.00544853401907757
     },
     "val_metrics": {
-        "loss": 0.029860323294997215,
+        "loss": 0.037699028849601746,
         "accuracy": 1.0,
         "precision": 1.0,
         "recall": 1.0,

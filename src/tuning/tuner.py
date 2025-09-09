@@ -63,7 +63,6 @@ class ModelTuner:
         # Best model + hyperparameters
         best_model = tuner.get_best_models(num_models=1)[0]
         best_hp = tuner.get_best_hyperparameters(num_trials=1)[0]
-        self.metric_names = best_model.metrics_names
         log_message(f"Best hyperparameters: {best_hp.values}",self.log_file)
 
         # Retrain

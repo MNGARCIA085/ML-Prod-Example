@@ -62,9 +62,9 @@ def main():
     # Model function mapping
     model_fns = get_model_fns(dropout_rate)
 
-    # callbacks
+    # callbacks (more like a placeholder)
     callbacks = get_callbacks(
-        use_early_stopping=True, 
+        use_early_stopping=False, 
         use_reduce_lr=False
     )
 

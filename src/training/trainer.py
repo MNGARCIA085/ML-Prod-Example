@@ -37,7 +37,7 @@ class ModelTrainer:
         List of Keras callbacks (default empty list).
     """
     
-    def __init__(self, model_fn, train_ds, val_ds, model_name,
+    def __init__(self, model_fn, train_ds, val_ds, model_name, # pass train and val ds later to train
                  data_variant="default", log_dir="logs/training", epochs=2,
                  hyperparameters=None, callbacks=None):
         self.model_fn = model_fn
